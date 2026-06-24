@@ -25,6 +25,9 @@
   }
   .header .next-exam .days { font-size: 28px; font-weight: 700; }
   .header .next-exam .label { font-size: 13px; opacity: 0.85; }
+  .header .exam-cards {
+    display: flex; gap: 12px;
+  }
 
   /* ── Phase Progress Bar ── */
   .phase-bar {
@@ -233,9 +236,15 @@
       <h1>📚 学习计划 & 考试日历</h1>
       <div class="sub" id="todayDisplay">加载中...</div>
     </div>
-    <div class="next-exam">
-      <div class="days" id="nextExamDays">—</div>
-      <div class="label" id="nextExamLabel">距下次考试</div>
+    <div class="exam-cards">
+      <div class="next-exam">
+        <div class="days" id="nextExamDays1">—</div>
+        <div class="label" id="nextExamLabel1">距下次考试</div>
+      </div>
+      <div class="next-exam">
+        <div class="days" id="nextExamDays2">—</div>
+        <div class="label" id="nextExamLabel2">距第二次考试</div>
+      </div>
     </div>
   </div>
 
@@ -354,19 +363,28 @@ function updateHeader() {
   document.getElementById('todayDisplay').textContent =
     `今天是 ${TODAY.getFullYear()}年${TODAY.getMonth()+1}月${TODAY.getDate()}日 星期${'日一二三四五六'[TODAY.getDay()]}`;
 
-  // Next exam
-  let next = null;
-  for (const d of EXAM_DATES) {
-    const dt = dObj(d);
-    if (dt >= TODAY) { next = { date: dt, label: KEY_DATES.find(k=>k.date===d)?.label || d }; break; }
-  }
-  if (next) {
-    const diff = daysBetween(TODAY, next.date);
-    document.getElementById('nextExamDays').textContent = diff;
-    document.getElementById('nextExamLabel').textContent = `距 ${next.label}`;
+  // Get upcoming exams sorted by date
+  const upcoming = EXAM_DATES
+    .map(d => ({ date: dObj(d), label: KEY_DATES.find(k=>k.date===d)?.label || d }))
+    .filter(e => e.date >= TODAY)
+    .sort((a, b) => a.date - b.date);
+
+  // First card: nearest exam
+  if (upcoming[0]) {
+    document.getElementById('nextExamDays1').textContent = daysBetween(TODAY, upcoming[0].date);
+    document.getElementById('nextExamLabel1').textContent = `距 ${upcoming[0].label.replace('📝 ','')}`;
   } else {
-    document.getElementById('nextExamDays').textContent = '✓';
-    document.getElementById('nextExamLabel').textContent = '全部完成';
+    document.getElementById('nextExamDays1').textContent = '✓';
+    document.getElementById('nextExamLabel1').textContent = '全部完成';
+  }
+
+  // Second card: second nearest exam
+  if (upcoming[1]) {
+    document.getElementById('nextExamDays2').textContent = daysBetween(TODAY, upcoming[1].date);
+    document.getElementById('nextExamLabel2').textContent = `距 ${upcoming[1].label.replace('📝 ','')}`;
+  } else {
+    document.getElementById('nextExamDays2').textContent = '—';
+    document.getElementById('nextExamLabel2').textContent = '—';
   }
 }
 
