@@ -229,6 +229,32 @@
   .legend-dot.blue { background: #74b9ff; }
   .legend-dot.purple { background: #6c5ce7; }
   .legend-dot.green { background: #00b894; }
+
+  /* ── TOEIC Plan Modal ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 1000; justify-content: center; align-items: center; padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-content {
+    background: #fff; border-radius: 16px; max-width: 760px; width: 100%;
+    max-height: 90vh; overflow-y: auto; padding: 28px; position: relative;
+  }
+  .modal-close {
+    position: sticky; top: 0; float: right; width: 32px; height: 32px;
+    background: #ff7675; color: #fff; border: none; border-radius: 50%;
+    font-size: 18px; cursor: pointer; z-index: 1; display: flex;
+    align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: #d63031; }
+  .modal-images {
+    display: flex; flex-direction: column; gap: 12px; align-items: center;
+    clear: both;
+  }
+  .modal-images img {
+    width: 100%; max-width: 540px; border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
 </style>
 </head>
 <body>
@@ -303,6 +329,23 @@
           <div class="import-msg" id="importMsg"></div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOEIC Plan Modal ─── -->
+<div class="modal-overlay" id="toeicModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeToeicPlan()">✕</button>
+    <h2 style="margin-bottom:12px;font-size:18px;font-weight:700">📋 60天托业备考计划</h2>
+    <p style="color:#636e72;font-size:13px;margin-bottom:16px">
+      2026.06.25 → 2026.08.23 &nbsp;|&nbsp; 目标 700分 &nbsp;|&nbsp; 总学时 300h
+    </p>
+    <div class="modal-images">
+      <img src="img/toeic-schedule-1.jpg" alt="托业备考计划-封面" loading="lazy">
+      <img src="img/toeic-schedule-2.jpg" alt="基础筑基期" loading="lazy">
+      <img src="img/toeic-schedule-3.jpg" alt="专项强化期" loading="lazy">
+      <img src="img/toeic-schedule-4.jpg" alt="冲刺模考期" loading="lazy">
     </div>
   </div>
 </div>
@@ -437,7 +480,9 @@ function renderPhaseBar() {
   track.innerHTML = PHASES.map((p, i) => {
     const active = i === activeIdx;
     const past = TODAY > dObj(p.end);
-    return `<div class="seg ${p.cls} ${active?'active':''} ${past?'inactive':''}">${p.label}</div>`;
+    const isToeic = p.label.includes('托业');
+    const clickAttr = isToeic ? ' style="cursor:pointer" onclick="openToeicPlan()"' : '';
+    return `<div class="seg ${p.cls} ${active?'active':''} ${past?'inactive':''}"${clickAttr}>${p.label}${isToeic ? ' 📋' : ''}</div>`;
   }).join('');
 
   // Show exam countdown instead of start dates
@@ -705,6 +750,24 @@ function init() {
 }
 init();
 loadCloudData();
+
+// ─── TOEIC Plan Modal ──
+function openToeicPlan() {
+  document.getElementById('toeicModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeToeicPlan() {
+  document.getElementById('toeicModal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('toeicModal').addEventListener('click', function(e) {
+    if (e.target === this) closeToeicPlan();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeToeicPlan();
+  });
+});
 </script>
 </body>
 </html>
