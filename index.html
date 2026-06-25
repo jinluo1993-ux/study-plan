@@ -46,10 +46,10 @@
   }
   .phase-bar .track .seg:last-child { border-right: none; }
   .phase-bar .track .seg.active { color: #fff; }
-  .phase-bar .track .seg.p0 { background: #ff7675; }  /* 证券 */
-  .phase-bar .track .seg.p1 { background: #fdcb6e; }  /* 托业 */
-  .phase-bar .track .seg.p2 { background: #55efc4; }  /* 基金 */
-  .phase-bar .track .seg.p3 { background: #74b9ff; }  /* 长期 */
+  .phase-bar .track .seg.p0 { background: #fdcb6e; }  /* 托业 */
+  .phase-bar .track .seg.p1 { background: #a29bfe; }  /* CFA一级 */
+  .phase-bar .track .seg.p2 { background: #74b9ff; }  /* BEC */
+  .phase-bar .track .seg.p3 { background: #00cec9; }  /* CPA */
   .phase-bar .track .seg.p0.active, .phase-bar .track .seg.p1.active,
   .phase-bar .track .seg.p2.active, .phase-bar .track .seg.p3.active {
     font-weight: 700; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
@@ -187,11 +187,10 @@
   .progress-fill {
     height: 100%; border-radius: 8px; transition: width 0.4s ease; min-width: 0;
   }
-  .progress-fill.c0 { background: linear-gradient(90deg, #ff7675, #e17055); }
-  .progress-fill.c1 { background: linear-gradient(90deg, #fdcb6e, #e17055); }
-  .progress-fill.c2 { background: linear-gradient(90deg, #55efc4, #00b894); }
-  .progress-fill.c3 { background: linear-gradient(90deg, #74b9ff, #0984e3); }
-  .progress-fill.c4 { background: linear-gradient(90deg, #a29bfe, #6c5ce7); }
+  .progress-fill.c0 { background: linear-gradient(90deg, #fdcb6e, #e17055); }
+  .progress-fill.c1 { background: linear-gradient(90deg, #a29bfe, #6c5ce7); }
+  .progress-fill.c2 { background: linear-gradient(90deg, #74b9ff, #0984e3); }
+  .progress-fill.c3 { background: linear-gradient(90deg, #00cec9, #00b894); }
 
   /* ── Data Import ── */
   .import-area { margin-top: 14px; border-top: 1px solid #f1f2f6; padding-top: 12px; }
@@ -276,9 +275,8 @@
       <h3>📝 今日复习记录</h3>
       <div class="tracker-input">
         <select id="trackerSubject">
-          <option value="证券从业">证券从业</option>
-          <option value="基金从业">基金从业</option>
           <option value="托业TOEIC">托业TOEIC</option>
+          <option value="CFA一级">CFA一级</option>
           <option value="BEC高级">BEC高级</option>
           <option value="CPA">CPA</option>
         </select>
@@ -307,24 +305,35 @@
 <script>
 // ─── Data ──────────────────────────────────────
 const KEY_DATES = [
-  { date: '2026-08-15', label: '证券从业报名开始', type: 'reg' },
-  { date: '2026-09-19', label: '📝 证券从业考试', type: 'exam' },
+  // CFA level 1 registration windows
+  { date: '2026-08-11', label: 'CFA一级报名截止(第2期)', type: 'reg' },
+  { date: '2026-11-11', label: '📝 CFA一级考试(第2期)', type: 'exam' },
+  { date: '2026-11-17', label: '📝 CFA一级考试(第2期结束)', type: 'exam' },
+
+  // 托业
   { date: '2026-09-20', label: '📝 托业考试(首选)', type: 'exam' },
-  { date: '2026-10-01', label: '基金从业报名开始', type: 'reg' },
   { date: '2026-10-25', label: '📝 托业考试(备选)', type: 'exam' },
-  { date: '2026-11-28', label: '📝 基金从业考试', type: 'exam' },
+
+  // CFA level 1 registration for 2027 Feb
+  { date: '2026-11-05', label: 'CFA一级报名截止(第3期)', type: 'reg' },
+  { date: '2027-02-22', label: '📝 CFA一级考试(第3期)', type: 'exam' },
+  { date: '2027-02-28', label: '📝 CFA一级考试(第3期结束)', type: 'exam' },
+
+  // BEC
   { date: '2027-03-11', label: 'BEC报名开始', type: 'reg' },
+  { date: '2027-05-22', label: '📝 BEC考试(预计)', type: 'exam' },
+
+  // CPA
   { date: '2027-04-07', label: 'CPA报名开始', type: 'reg' },
   { date: '2027-04-30', label: 'CPA报名截止', type: 'reg' },
-  { date: '2027-05-22', label: '📝 BEC考试(预计)', type: 'exam' },
   { date: '2027-08-29', label: '📝 CPA考试', type: 'exam' },
 ];
 
 const PHASES = [
-  { label: '证券主攻', start: '2026-06-24', end: '2026-08-08', cls: 'p0' },
-  { label: '双冲刺',   start: '2026-08-10', end: '2026-09-13', cls: 'p1' },
-  { label: '基金从业', start: '2026-09-21', end: '2026-11-28', cls: 'p2' },
-  { label: 'BEC/CPA',  start: '2026-12-01', end: '2027-08-30', cls: 'p3' },
+  { label: '托业主攻', start: '2026-06-24', end: '2026-09-20', cls: 'p0' },
+  { label: 'CFA一级',  start: '2026-09-21', end: '2027-02-28', cls: 'p1' },
+  { label: 'BEC高级',  start: '2027-03-01', end: '2027-05-22', cls: 'p2' },
+  { label: 'CPA',      start: '2027-05-23', end: '2027-08-29', cls: 'p3' },
 ];
 
 const MONTH_RANGE = { start: {y:2026,m:6}, end: {y:2027,m:8} };
@@ -338,12 +347,12 @@ KEY_DATES.filter(d=>d.type==='reg').forEach(d => { REG_MAP[d.date] = d.label; })
 const DATE_SHORT = {};
 KEY_DATES.forEach(d => {
   let s = '';
-  if (d.label.includes('证券')) s = '证券';
-  else if (d.label.includes('托业')) s = '托业';
-  else if (d.label.includes('基金')) s = '基金';
+  if (d.label.includes('托业')) s = '托业';
+  else if (d.label.includes('CFA')) s = 'CFA';
   else if (d.label.includes('BEC')) s = 'BEC';
   else if (d.label.includes('CPA')) s = 'CPA';
-  if (d.type === 'reg') s += '报名';
+  if (d.type === 'reg') s += '截止';
+  else if (d.label.includes('结束')) s += '考试末';
   else s += '考试';
   DATE_SHORT[d.date] = s;
 });
@@ -424,26 +433,23 @@ function renderCalendar() {
   for (let i = 0; i < totalMonths; i++) {
     const y = sy + Math.floor((sm - 1 + i) / 12);
     const m = ((sm - 1 + i) % 12) + 1;
-    const compact = i >= 6; // first 6 months detailed, rest compact
+    const compact = i >= 6;
 
     const firstDay = new Date(y, m - 1, 1);
     const lastDate = new Date(y, m, 0).getDate();
-    const startDow = firstDay.getDay(); // 0=Sun
+    const startDow = firstDay.getDay();
 
     html += `<div class="month-card ${compact?'compact':''}">`;
     html += `<div class="month-title">${y}年${m}月</div>`;
 
-    // weekday header
     html += '<div class="weekday-row">';
     '日一二三四五六'.split('').forEach(d => html += `<span>${d}</span>`);
     html += '</div>';
 
     html += '<div class="days-grid">';
 
-    // empty cells
     for (let e = 0; e < startDow; e++) html += '<div class="day-cell empty"></div>';
 
-    // day cells
     for (let d = 1; d <= lastDate; d++) {
       const dateStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const dt = dObj(dateStr);
@@ -460,10 +466,9 @@ function renderCalendar() {
       else if (isFuture && !isExam) cls += ' future';
       if (isReg && !isExam) cls += ' reg-start';
 
-      // Build cell with label
       const shortLabel = DATE_SHORT[dateStr] || '';
       const labelHtml = shortLabel ? `<span class="day-label">${shortLabel}</span>` : '';
-      const fullTitle = dateStr + (shortLabel ? ` — ${shortLabel.replace('考试','').replace('报名','')}${isExam?'考试':''}${isReg?'报名':''}` : '');
+      const fullTitle = dateStr + (shortLabel ? ` — ${shortLabel.replace('考试','').replace('截止','')}${isExam?'考试':''}${isReg?'截止':''}` : '');
 
       html += `<div class="${cls}" title="${fullTitle}">${d}${labelHtml}</div>`;
     }
@@ -477,7 +482,6 @@ function renderCalendar() {
 // ─── Key Dates Table ────────────────────────────
 function renderKeyDates() {
   const t = document.getElementById('keyDatesTable');
-  // Show all dates, sort chronologically
   const sorted = [...KEY_DATES].sort((a,b) => a.date.localeCompare(b.date));
   t.innerHTML = `
     <tr><th>日期</th><th>事项</th><th>剩余</th></tr>
@@ -543,15 +547,14 @@ function deleteTrackerEntry(idx) {
   renderProgressBars();
 }
 
-// ─── Progress Bars (cumulative across all dates) ──
+// ─── Progress Bars ──
 const PROGRESS_TARGETS = {
-  '证券从业': 180,
-  '基金从业': 80,
   '托业TOEIC': 120,
+  'CFA一级': 350,
   'BEC高级': 300,
   'CPA': 1600,
 };
-const PROGRESS_COLORS = ['c0','c1','c2','c3','c4'];
+const PROGRESS_COLORS = ['c0','c1','c2','c3'];
 
 function getCumulativeHours() {
   const totals = {};
