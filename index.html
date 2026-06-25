@@ -311,10 +311,10 @@ const KEY_DATES = [
   { date: '2026-11-17', label: '📝 CFA一级考试(第2期结束)', type: 'exam' },
 
   // 托业
-  { date: '2026-07-27', label: '托业报名截止(8月场)', type: 'reg' },
-  { date: '2026-08-23', label: '📝 托业考试(8月场)', type: 'exam' },
-  { date: '2026-09-28', label: '托业报名截止(10月场)', type: 'reg' },
-  { date: '2026-10-25', label: '📝 托业考试(10月场)', type: 'exam' },
+  { date: '2026-07-27', label: '托业报名截止(第1期)', type: 'reg' },
+  { date: '2026-08-23', label: '📝 托业考试(第1期)', type: 'exam' },
+  { date: '2026-09-28', label: '托业报名截止(第2期)', type: 'reg' },
+  { date: '2026-10-25', label: '📝 托业考试(第2期)', type: 'exam' },
 
   // CFA level 1 registration for 2027 Feb
   { date: '2026-11-05', label: 'CFA一级报名截止(第3期)', type: 'reg' },
@@ -349,7 +349,11 @@ KEY_DATES.filter(d=>d.type==='reg').forEach(d => { REG_MAP[d.date] = d.label; })
 const DATE_SHORT = {};
 KEY_DATES.forEach(d => {
   let s = '';
-  if (d.label.includes('托业')) s = '托业';
+  if (d.label.includes('托业')) {
+    const m = d.label.match(/第(\d+)期/);
+    const p = m ? '第' + m[1] + '期' : '';
+    s = '托业' + p;
+  }
   else if (d.label.includes('CFA')) {
     // Extract period from label like '(第2期)' or '(第3期)'
     const m = d.label.match(/第(\d+)期/);
