@@ -403,10 +403,18 @@ function updateHeader() {
     document.getElementById('nextExamLabel1').textContent = '全部完成';
   }
 
-  // Second card: second nearest exam
-  if (upcoming[1]) {
-    document.getElementById('nextExamDays2').textContent = daysBetween(TODAY, upcoming[1].date);
-    document.getElementById('nextExamLabel2').textContent = `距 ${upcoming[1].label.replace('📝 ','')}`;
+  // Second card: CFA1期 countdown
+  const cfa1Date = KEY_DATES.find(k => k.label.includes('CFA一级考试(1期)') && !k.label.includes('结束'));
+  if (cfa1Date) {
+    const dt = dObj(cfa1Date.date);
+    const diff = daysBetween(TODAY, dt);
+    if (diff >= 0) {
+      document.getElementById('nextExamDays2').textContent = diff;
+      document.getElementById('nextExamLabel2').textContent = `距 ${cfa1Date.label.replace('📝 ','')}`;
+    } else {
+      document.getElementById('nextExamDays2').textContent = '✓';
+      document.getElementById('nextExamLabel2').textContent = 'CFA1期已过';
+    }
   } else {
     document.getElementById('nextExamDays2').textContent = '—';
     document.getElementById('nextExamLabel2').textContent = '—';
