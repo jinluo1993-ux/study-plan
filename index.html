@@ -443,17 +443,17 @@ function renderPhaseBar() {
   // Show exam countdown instead of start dates
   marks.innerHTML = PHASES.map(p => {
     // Map phase label to its corresponding exam date
-    let examLabel = '';
-    if (p.label.includes('托业')) examLabel = '托业考试(1期)';
-    else if (p.label.includes('CFA')) examLabel = 'CFA一级考试(1期)';
-    else if (p.label.includes('BEC')) examLabel = 'BEC考试(预计)';
-    else if (p.label.includes('CPA')) examLabel = 'CPA考试';
+    let examLabel = '', emoji = '';
+    if (p.label.includes('托业')) { examLabel = '托业考试(1期)'; emoji = '🎯'; }
+    else if (p.label.includes('CFA')) { examLabel = 'CFA一级考试(1期)'; emoji = '📊'; }
+    else if (p.label.includes('BEC')) { examLabel = 'BEC考试(预计)'; emoji = '🌍'; }
+    else if (p.label.includes('CPA')) { examLabel = 'CPA考试'; emoji = '🧮'; }
     const kd = KEY_DATES.find(k => k.label.includes(examLabel));
     if (!kd) return `<span>—</span>`;
     const dt = dObj(kd.date);
     const diff = daysBetween(TODAY, dt);
     const days = diff < 0 ? '已过' : diff + '天';
-    return `<span>⏳${days}</span>`;
+    return `<span>${emoji}${days}</span>`;
   }).join('');
 }
 
