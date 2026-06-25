@@ -155,6 +155,11 @@
   }
   .tag-exam { background: #ffeaa7; color: #d63031; }
   .tag-reg { background: #dfe6e9; color: #0984e3; }
+  .phase-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+  .phase-dot.p0 { background:#fdcb6e; }
+  .phase-dot.p1 { background:#a29bfe; }
+  .phase-dot.p2 { background:#74b9ff; }
+  .phase-dot.p3 { background:#00cec9; }
 
   .tracker-input {
     display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;
@@ -494,17 +499,28 @@ function renderCalendar() {
 function renderKeyDates() {
   const t = document.getElementById('keyDatesTable');
   const sorted = [...KEY_DATES].sort((a,b) => a.date.localeCompare(b.date));
+  // Phase color mapping for key dates
+  function phaseForLabel(label) {
+    if (label.includes('托业')) return {ph: '托业', cls: 'p0'};
+    if (label.includes('CFA')) return {ph: 'CFA', cls: 'p1'};
+    if (label.includes('BEC')) return {ph: 'BEC高级', cls: 'p2'};
+    if (label.includes('CPA')) return {ph: 'CPA', cls: 'p3'};
+    return {ph: '', cls: ''};
+  }
   t.innerHTML = `
-    <tr><th>日期</th><th>事项</th><th>剩余</th></tr>
+    <tr><th>日期</th><th>事项</th><th>阶段</th><th>剩余</th></tr>
     ${sorted.map(d => {
       const dt = dObj(d.date);
       const diff = daysBetween(TODAY, dt);
       const remaining = diff < 0 ? '已过' : diff === 0 ? '今天!' : `${diff}天`;
       const tagCls = d.type === 'exam' ? 'tag-exam' : 'tag-reg';
       const tagLabel = d.type === 'exam' ? '考试' : '报名';
+      const ph = phaseForLabel(d.label);
+      const phaseHtml = ph.ph ? `<span class="phase-dot ${ph.cls}"></span>${ph.ph}` : '';
       return `<tr>
         <td style="white-space:nowrap">${d.date}</td>
         <td><span class="tag ${tagCls}">${tagLabel}</span> ${d.label}</td>
+        <td style="font-size:12px">${phaseHtml}</td>
         <td style="font-weight:${diff>=0&&diff<=30?'700':'400'}; color:${diff<0?'#b2bec3':diff<=7?'#d63031':diff<=30?'#fdcb6e':'#636e72'}">${remaining}</td>
       </tr>`;
     }).join('')}
