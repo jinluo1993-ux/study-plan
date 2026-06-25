@@ -323,6 +323,7 @@
 
       <div class="import-area">
         <span class="import-toggle" onclick="toggleImport()">📥 导入同步数据</span>
+        <span style="font-size:11px;color:#636e72;margin-left:8px;cursor:pointer" onclick="document.getElementById('importMsg').innerHTML='<span style=\"color:#6c5ce7\">☁️ 正在同步...</span>';syncToCloud()">📤 推送到云端</span>
         <div class="import-box" id="importBox">
           <textarea id="importData" placeholder="在此粘贴我给你的数据块..."></textarea>
           <button onclick="importData()">导入</button>
@@ -630,6 +631,7 @@ function addTrackerEntry() {
   saveTrackerData(data);
   renderTracker();
   renderProgressBars();
+  syncToCloud();
 }
 function deleteTrackerEntry(idx) {
   const data = getTrackerData();
@@ -637,6 +639,7 @@ function deleteTrackerEntry(idx) {
   saveTrackerData(data);
   renderTracker();
   renderProgressBars();
+  syncToCloud();
 }
 
 // ─── Progress Bars ──
@@ -715,8 +718,10 @@ function importData() {
   }
 }
 
-// ─── Cloud Data Sync ──
+// ─── Cloud Data Sync (auto read+write) ──
 const CLOUD_DATA_URL = 'https://raw.githubusercontent.com/jinluo1993-ux/study-plan/main/data.json';
+const GH_API_FILE = 'https://api.github.com/repos/jinluo1993-ux/study-plan/contents/data.json';
+function getGhToken() { return localStorage.getItem('gh_token') || ''; }
 
 async function loadCloudData() {
   try {
@@ -739,6 +744,53 @@ async function loadCloudData() {
   } catch(e) { console.log('Cloud sync unavailable'); }
 }
 
+async function syncToCloud() {
+  try {
+    // 1. Collect all exam_tracker_* data from localStorage
+    const payload = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith('exam_tracker_')) continue;
+      const date = key.replace('exam_tracker_', '');
+      try {
+        const entries = JSON.parse(localStorage.getItem(key));
+        if (Array.isArray(entries) && entries.length > 0) {
+          payload[date] = entries;
+        }
+      } catch {}
+    }
+
+    if (Object.keys(payload).length === 0) return;
+
+    const token = getGhToken();
+    if (!token) { console.log('No token set - sync skipped'); return; }
+
+    // 2. Get current file SHA
+    const shaRes = await fetch(GH_API_FILE, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!shaRes.ok) throw new Error('GET sha failed: ' + shaRes.status);
+    const shaData = await shaRes.json();
+
+    // 3. Push merged data
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+    const putRes = await fetch(GH_API_FILE, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: 'auto-sync study tracker',
+        content: content,
+        sha: shaData.sha,
+      })
+    });
+    if (!putRes.ok) throw new Error('PUT failed: ' + putRes.status + ' ' + (await putRes.text()).slice(0,100));
+    console.log('Sync OK: ' + Object.keys(payload).length + ' days pushed');
+  } catch(e) { console.log('Sync error:', e); }
+}
+
 // ─── Init ──────────────────────────────────────
 function init() {
   updateHeader();
@@ -747,6 +799,14 @@ function init() {
   renderKeyDates();
   renderTracker();
   renderProgressBars();
+  // Token setup - ask on first visit
+  if (!localStorage.getItem('gh_token')) {
+    const token = prompt('🔑 请输入 GitHub Token 以开启自动同步\n(首次配置，仅需一次)');
+    if (token && token.trim()) {
+      localStorage.setItem('gh_token', token.trim());
+      syncToCloud();
+    }
+  }
 }
 init();
 loadCloudData();
