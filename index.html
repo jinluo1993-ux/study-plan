@@ -203,6 +203,41 @@
     font-size: 12px; color: #636e72; cursor: pointer; text-decoration: underline dotted;
   }
   .import-toggle:hover { color: #6c5ce7; }
+  .sync-btn { font-size:11px;color:#636e72;margin-left:8px;cursor:pointer; }
+  .sync-btn:hover { color:#6c5ce7; }
+  .total-progress { margin-top:20px;padding-top:16px;border-top:2px solid #f1f2f6;text-align:center; }
+  .total-progress .big-num {
+    font-size:48px;font-weight:800;
+    background:linear-gradient(135deg,#6c5ce7,#a29bfe);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;line-height:1.1;
+  }
+  .total-progress .label { font-size:12px;color:#636e72;margin-top:2px; }
+  .total-progress .detail { font-size:11px;color:#b2bec3;margin-top:4px; }
+  .sync-btn {
+    font-size: 11px; color: #636e72; margin-left: 8px; cursor: pointer;
+    transition: color 0.2s;
+  }
+  .sync-btn:hover { color: #6c5ce7; }
+
+  /* ── Total Progress ── */
+  .total-progress {
+    margin-top: 20px; padding-top: 16px; border-top: 2px solid #f1f2f6;
+    text-align: center;
+  }
+  .total-progress .big-num {
+    font-size: 48px; font-weight: 800;
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  .total-progress .label {
+    font-size: 12px; color: #636e72; margin-top: 2px;
+  }
+  .total-progress .detail {
+    font-size: 11px; color: #b2bec3; margin-top: 4px;
+  }
   .import-box { display: none; margin-top: 8px; }
   .import-box.show { display: block; }
   .import-box textarea {
@@ -320,10 +355,12 @@
 
       <h3 style="margin-top:18px; font-size:15px; font-weight:700;">📊 累计进度</h3>
       <div id="progressBars"></div>
+      <div id="totalProgress"></div>
+      <div id="totalProgress"></div>
 
       <div class="import-area">
         <span class="import-toggle" onclick="toggleImport()">📥 导入同步数据</span>
-        <span style="font-size:11px;color:#636e72;margin-left:8px;cursor:pointer" onclick="document.getElementById('importMsg').innerHTML='<span style=\"color:#6c5ce7\">☁️ 正在同步...</span>';syncToCloud()">📤 推送到云端</span>
+        <span class="sync-btn" onclick="syncAndShowStatus()">📤 推送到云端</span>
         <div class="import-box" id="importBox">
           <textarea id="importData" placeholder="在此粘贴我给你的数据块..."></textarea>
           <button onclick="importData()">导入</button>
@@ -631,6 +668,7 @@ function addTrackerEntry() {
   saveTrackerData(data);
   renderTracker();
   renderProgressBars();
+  renderTotalProgress();
   syncToCloud();
 }
 function deleteTrackerEntry(idx) {
@@ -639,6 +677,7 @@ function deleteTrackerEntry(idx) {
   saveTrackerData(data);
   renderTracker();
   renderProgressBars();
+  renderTotalProgress();
   syncToCloud();
 }
 
@@ -671,6 +710,36 @@ function getCumulativeHours() {
   return totals;
 }
 
+function renderTotalProgress() {
+  const container = document.getElementById('totalProgress');
+  if (!container) return;
+  const totals = getCumulativeHours();
+  const subjects = Object.keys(PROGRESS_TARGETS);
+  let totalHours = 0, totalTarget = 0;
+  for (const subj of subjects) {
+    totalHours += (totals[subj] || 0);
+    totalTarget += PROGRESS_TARGETS[subj];
+  }
+  const pct = totalTarget > 0 ? ((totalHours / totalTarget) * 100) : 0;
+  const rounded = pct.toFixed(1);
+  container.innerHTML = `
+    <div class="total-progress">
+      <div class="big-num">${rounded}%</div>
+      <div class="label">总进度</div>
+      <div class="detail">${totalHours}h / ${totalTarget}h</div>
+    </div>
+  `;
+}
+function renderTotalProgress() {
+  const el = document.getElementById('totalProgress');
+  if (!el) return;
+  const totals = getCumulativeHours();
+  const subs = Object.keys(PROGRESS_TARGETS);
+  let th = 0, tt = 0;
+  for (const s of subs) { th += (totals[s]||0); tt += PROGRESS_TARGETS[s]; }
+  const p = tt > 0 ? ((th/tt)*100).toFixed(1) : '0.0';
+  el.innerHTML = '<div class="total-progress"><div class="big-num">'+p+'%</div><div class="label">总进度</div><div class="detail">'+th+'h / '+tt+'h</div></div>';
+}
 function renderProgressBars() {
   const container = document.getElementById('progressBars');
   const totals = getCumulativeHours();
@@ -802,6 +871,7 @@ function init() {
   renderKeyDates();
   renderTracker();
   renderProgressBars();
+  renderTotalProgress();
   // Token setup - ask on first visit
   if (!localStorage.getItem('gh_token')) {
     const token = prompt('🔑 请输入 GitHub Token 以开启自动同步\n(首次配置，仅需一次)');
@@ -818,6 +888,14 @@ loadCloudData();
 function openToeicPlan() {
   document.getElementById('toeicModal').classList.add('show');
   document.body.style.overflow = 'hidden';
+}
+function syncAndShowStatus() {
+  document.getElementById('importMsg').innerHTML = '<span style="color:#6c5ce7">☁️ 正在同步...</span>';
+  syncToCloud();
+}
+function syncAndShowStatus() {
+  document.getElementById('importMsg').innerHTML = '<span style="color:#6c5ce7">☁️ 正在同步...</span>';
+  syncToCloud();
 }
 function closeToeicPlan() {
   document.getElementById('toeicModal').classList.remove('show');
