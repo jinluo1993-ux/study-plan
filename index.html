@@ -348,11 +348,16 @@ const DATE_SHORT = {};
 KEY_DATES.forEach(d => {
   let s = '';
   if (d.label.includes('托业')) s = '托业';
-  else if (d.label.includes('CFA')) s = 'CFA';
+  else if (d.label.includes('CFA')) {
+    // Extract period from label like '(第2期)' or '(第3期)'
+    const m = d.label.match(/第(\d+)期/);
+    const p = m ? '第' + m[1] + '期' : '';
+    s = 'CFA' + p;
+  }
   else if (d.label.includes('BEC')) s = 'BEC';
   else if (d.label.includes('CPA')) s = 'CPA';
   if (d.type === 'reg') s += '截止';
-  else if (d.label.includes('结束')) s += '考试末';
+  else if (d.label.includes('结束')) s += '末';
   else s += '考试';
   DATE_SHORT[d.date] = s;
 });
