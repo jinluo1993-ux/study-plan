@@ -663,17 +663,20 @@ function renderTracker() {
   const data = getTrackerData();
   const t = document.getElementById('trackerTable');
   if (data.length === 0) {
-    t.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#b2bec3;padding:12px">今天还没记录</td></tr>';
+    t.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#b2bec3;padding:12px">今天还没记录</td></tr>';
   } else {
     t.innerHTML = `
-      <tr><th>科目</th><th>时长</th><th></th></tr>
-      ${data.map((e, i) => `
-        <tr>
+      <tr><th>科目</th><th>时长</th><th>记录时间</th><th></th></tr>
+      ${data.map((e, i) => {
+        const ts = e.ts || '—';
+        const tm = ts !== '—' ? ts.slice(2,4) + '-' + ts.slice(5) : '—';
+        return `<tr>
           <td>${e.subject}</td>
           <td>${e.hours}h</td>
+          <td style="font-size:11px;color:#636e72;font-family:monospace">${tm}</td>
           <td><a href="#" onclick="deleteTrackerEntry(${i});return false" style="color:#ff7675;text-decoration:none;font-size:12px">✕</a></td>
-        </tr>
-      `).join('')}
+        </tr>`;
+      }).join('')}
     `;
   }
   const total = data.reduce((s, e) => s + e.hours, 0);
@@ -683,7 +686,12 @@ function addTrackerEntry() {
   const subj = document.getElementById('trackerSubject').value;
   const hrs = parseFloat(document.getElementById('trackerHours').value) || 1;
   const data = getTrackerData();
-  data.push({ subject: subj, hours: hrs });
+  const now = new Date();
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const dd = String(now.getDate()).padStart(2,'0');
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mi = String(now.getMinutes()).padStart(2,'0');
+  data.push({ subject: subj, hours: hrs, ts: mm+dd+'-'+hh+':'+mi });
   saveTrackerData(data);
   renderTracker();
   renderProgressBars();
