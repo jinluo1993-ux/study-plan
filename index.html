@@ -829,9 +829,24 @@ async function loadCloudData() {
     const data = JSON.parse(raw);
     let count = 0;
     for (const [date, entries] of Object.entries(data)) {
-      if (!localStorage.getItem('exam_tracker_' + date)) {
+      const local = localStorage.getItem('exam_tracker_' + date);
+      if (!local) {
         localStorage.setItem('exam_tracker_' + date, JSON.stringify(entries));
         count += entries.length;
+      } else {
+        // Merge: deduplicate by ts (timestamp) when available, else append by subject+hours
+        try {
+          const localArr = JSON.parse(local);
+          if (!Array.isArray(localArr)) continue;
+          for (const e of entries) {
+            const dup = localArr.find(l =>
+              (e.ts && l.ts === e.ts) ||
+              (!e.ts && l.subject === e.subject && l.hours === e.hours)
+            );
+            if (!dup) { localArr.push(e); count++; }
+          }
+          localStorage.setItem('exam_tracker_' + date, JSON.stringify(localArr));
+        } catch {}
       }
     }
     if (count > 0) {
