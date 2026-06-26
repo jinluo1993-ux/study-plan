@@ -817,7 +817,7 @@ async function loadCloudData() {
     const r = await fetch(GH_API_FILE + '?t=' + Date.now(), { headers });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const meta = await r.json();
-    const raw = atob(meta.content.replace(/\n/g, ''));
+    const raw = decodeURIComponent(escape(atob(meta.content.replace(/\n/g, ''))));
     const data = JSON.parse(raw);
     let count = 0;
     for (const [date, entries] of Object.entries(data)) {
