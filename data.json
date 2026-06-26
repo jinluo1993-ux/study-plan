@@ -1,32 +1,28 @@
 {
   "2026-06-26": [
     {
-      "subject": "æä¸TOEIC",
+      "subject": "托业TOEIC",
       "hours": 0.5
     },
     {
-      "subject": "CFAä¸çº§",
+      "subject": "CFA一级",
       "hours": 2
-    },
-    {
-      "subject": "æä¸TOEIC",
-      "hours": 3
     },
     {
       "subject": "托业TOEIC",
-      "hours": 1
-    }
-  ],
-  "2026-06-24": [
-    {
-      "subject": "证券从业",
-      "hours": 2
+      "hours": 3
     }
   ],
   "2026-06-25": [
     {
       "subject": "托业TOEIC",
       "hours": 3
+    }
+  ],
+  "2026-06-24": [
+    {
+      "subject": "证券从业",
+      "hours": 2
     }
   ]
 }
