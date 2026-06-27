@@ -6,24 +6,26 @@
 <title>Jin's to do</title>
 <style>
   :root {
-    --bg: #f6f7fb;
-    --surface: #ffffff;
-    --surface-soft: #f9fafc;
-    --line: #e8ebf2;
-    --ink: #233143;
-    --muted: #677284;
-    --soft: #98a2b3;
-    --accent: #5f5ce6;
-    --accent-deep: #4d49c8;
-    --accent-soft: #f0efff;
-    --toeic: #d9952f;
-    --cfa: #6d63d9;
-    --bec: #2f82c9;
-    --cpa: #14998d;
-    --danger: #d94f4f;
-    --ok: #198f6b;
-    --shadow: 0 10px 30px rgba(35, 49, 67, 0.08);
-    --shadow-soft: 0 1px 3px rgba(35, 49, 67, 0.08);
+    --bg: #f4f1e9;
+    --surface: #fffdf8;
+    --surface-soft: #f8f5ee;
+    --line: #e5dccd;
+    --ink: #182433;
+    --muted: #657184;
+    --soft: #9a9388;
+    --accent: #1f3a5f;
+    --accent-deep: #132a45;
+    --accent-soft: #eaf0f6;
+    --toeic: #b5832e;
+    --cfa: #35446f;
+    --bec: #2e638f;
+    --cpa: #2f6d5e;
+    --danger: #b64c43;
+    --ok: #2f6d5e;
+    --gold-soft: #f7eddb;
+    --green-soft: #e8f1ed;
+    --shadow: 0 10px 30px rgba(24, 36, 51, 0.08);
+    --shadow-soft: 0 1px 3px rgba(24, 36, 51, 0.08);
     --radius: 8px;
     --gap: 16px;
   }
@@ -32,8 +34,8 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
     background:
-      radial-gradient(circle at top left, rgba(95,92,230,0.10), transparent 28rem),
-      linear-gradient(180deg, #fbfbfe 0%, var(--bg) 42%);
+      radial-gradient(circle at top left, rgba(31,58,95,0.10), transparent 28rem),
+      linear-gradient(180deg, #fffdf8 0%, var(--bg) 42%);
     color: var(--ink);
     padding: 24px;
   }
@@ -71,7 +73,7 @@
   .next-exam .days { color: var(--ink); font-size: 30px; font-weight: 780; line-height: 1; }
   .metric-detail { color: var(--soft); font-size: 11px; line-height: 1.35; }
   .next-exam.primary {
-    background: linear-gradient(135deg, var(--accent), #7871ed);
+    background: linear-gradient(135deg, var(--accent-deep), var(--accent));
     border-color: transparent; color: #fff;
   }
   .next-exam.primary .days, .next-exam.primary .label, .next-exam.primary .metric-detail { color: #fff; }
@@ -124,6 +126,18 @@
     background: var(--accent-soft); color: var(--accent-deep); font-size: 14px;
     font-weight: 760; text-align: right;
   }
+  .subject-label {
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .subject-badge {
+    width: 24px; height: 24px; border-radius: 50%; display: inline-flex;
+    align-items: center; justify-content: center; flex: 0 0 24px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0; color: #fff;
+  }
+  .subject-badge.c0 { background: var(--toeic); }
+  .subject-badge.c1 { background: var(--cfa); }
+  .subject-badge.c2 { background: var(--bec); }
+  .subject-badge.c3 { background: var(--cpa); }
 
   .progress-item { margin-bottom: 13px; }
   .progress-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; gap: 10px; }
@@ -151,7 +165,7 @@
   }
   .sync-btn:hover { border-color: var(--accent); color: var(--accent-deep); background: var(--accent-soft); }
   .sync-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .sync-btn.danger:hover { border-color: var(--danger); color: var(--danger); background: #fff5f5; }
+  .sync-btn.danger:hover { border-color: var(--danger); color: var(--danger); background: #fff7f2; }
   .token-note { font-size: 11px; color: var(--soft); line-height: 1.4; margin-top: 8px; }
   .sync-status { font-size: 12px; color: var(--muted); line-height: 1.4; margin-top: 6px; }
   .sync-status.ok { color: var(--ok); }
@@ -169,9 +183,7 @@
     width: 100%; height: 80px; padding: 8px; border: 1px solid var(--line);
     border-radius: var(--radius); font-size: 11px; font-family: monospace; resize: vertical;
   }
-  .import-box button {
-    margin-top: 6px; height: 30px; background: var(--ok); border-color: var(--ok); font-size: 12px;
-  }
+  .import-box button { margin-top: 6px; height: 30px; background: var(--ok); border-color: var(--ok); font-size: 12px; }
   .import-msg { font-size: 12px; margin-top: 6px; }
 
   .phase-bar { padding: 18px; margin-bottom: var(--gap); }
@@ -185,13 +197,13 @@
     border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-soft);
     color: var(--muted); font-size: 12px; font-weight: 700; transition: 0.2s; text-align: center;
   }
-  .phase-bar .track .seg.p0 { border-color: rgba(217,149,47,0.28); color: #9a6418; }
-  .phase-bar .track .seg.p1 { border-color: rgba(109,99,217,0.28); color: var(--cfa); }
-  .phase-bar .track .seg.p2 { border-color: rgba(47,130,201,0.28); color: var(--bec); }
-  .phase-bar .track .seg.p3 { border-color: rgba(20,153,141,0.28); color: var(--cpa); }
+  .phase-bar .track .seg.p0 { border-color: rgba(181,131,46,0.32); color: #7c5b1e; background: #fffaf0; }
+  .phase-bar .track .seg.p1 { border-color: rgba(53,68,111,0.25); color: var(--cfa); background: #f4f6fb; }
+  .phase-bar .track .seg.p2 { border-color: rgba(46,99,143,0.25); color: var(--bec); background: #f1f6fa; }
+  .phase-bar .track .seg.p3 { border-color: rgba(47,109,94,0.25); color: var(--cpa); background: #f0f7f3; }
   .phase-bar .track .seg.active {
-    background: var(--accent-soft); color: var(--accent-deep); border-color: rgba(95,92,230,0.40);
-    box-shadow: inset 0 0 0 1px rgba(95,92,230,0.08);
+    background: var(--accent-soft); color: var(--accent-deep); border-color: rgba(31,58,95,0.35);
+    box-shadow: inset 0 0 0 1px rgba(31,58,95,0.08);
   }
   .phase-bar .track .seg.inactive { opacity: 0.55; }
   .phase-bar .marks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 8px; font-size: 11px; color: var(--muted); }
@@ -233,30 +245,30 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
   }
   .day-cell.today {
-    background: var(--accent); color: #fff; font-weight: 760; box-shadow: 0 4px 12px rgba(95,92,230,0.22);
+    background: var(--accent); color: #fff; font-weight: 760; box-shadow: 0 4px 12px rgba(31,58,95,0.22);
   }
-  .day-cell.past { background: #f3fbf8; color: var(--ok); font-weight: 700; }
+  .day-cell.past { background: var(--green-soft); color: var(--ok); font-weight: 700; }
   .day-cell.past::after {
     content: "✓"; position: absolute; font-size: 8px; top: 1px; right: 3px; color: var(--ok);
   }
   .day-cell.future { background: #fbfcfe; color: #a4adbb; }
   .day-cell.empty { background: transparent; border-color: transparent; }
   .day-cell.exam {
-    background: #fff4f4; color: var(--danger); border-color: rgba(217,79,79,0.28); font-weight: 780;
+    background: #fff6f3; color: var(--danger); border-color: rgba(182,76,67,0.28); font-weight: 780;
   }
   .day-cell.exam .day-label { color: var(--danger); }
-  .day-cell.exam.past { background: #fff7f7; color: #c76a6a; }
+  .day-cell.exam.past { background: #fff9f6; color: #9e615b; }
   .day-cell.exam::after { display: none; }
   .day-cell.reg-start {
-    background: #eff7ff; color: var(--bec); border-color: rgba(47,130,201,0.22); font-weight: 720;
+    background: #eef5f8; color: var(--bec); border-color: rgba(46,99,143,0.22); font-weight: 720;
   }
   .day-cell.reg-start .day-label { color: var(--bec); }
 
   .key-dates-table .tag {
     display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 11px; font-weight: 700;
   }
-  .tag-exam { background: #fff4f4; color: var(--danger); }
-  .tag-reg { background: #eff7ff; color: var(--bec); }
+  .tag-exam { background: #fff6f3; color: var(--danger); }
+  .tag-reg { background: #eef5f8; color: var(--bec); }
   .remaining-past { color: var(--soft); font-weight: 400; }
   .remaining-normal { color: var(--muted); font-weight: 400; }
   .remaining-soon { color: var(--toeic); font-weight: 760; }
@@ -281,7 +293,7 @@
     background: var(--surface-soft); color: var(--muted); border: 1px solid var(--line); border-radius: 50%;
     font-size: 18px; cursor: pointer; z-index: 1; display: flex; align-items: center; justify-content: center;
   }
-  .modal-close:hover { color: var(--danger); border-color: rgba(217,79,79,0.25); background: #fff5f5; }
+  .modal-close:hover { color: var(--danger); border-color: rgba(182,76,67,0.25); background: #fff7f2; }
   .modal-meta { color: var(--muted); font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
   .modal-images { display: flex; flex-direction: column; gap: 14px; align-items: center; clear: both; }
   .modal-images img {
@@ -361,12 +373,12 @@
       <div class="panel-head">
         <div>
           <h3>📝 今日复习记录</h3>
-          <div class="panel-sub">托业 / CFA / BEC / CPA</div>
+          <div class="panel-sub">TOEIC / CFA / BEC / CPA</div>
         </div>
       </div>
       <div class="tracker-input">
         <select id="trackerSubject">
-          <option value="托业TOEIC">托业TOEIC</option>
+          <option value="托业TOEIC">TOEIC</option>
           <option value="CFA一级">CFA一级</option>
           <option value="BEC高级">BEC高级</option>
           <option value="CPA">CPA</option>
@@ -447,15 +459,15 @@
 <div class="modal-overlay" id="toeicModal">
   <div class="modal-content">
     <button class="modal-close" onclick="closeToeicPlan()">✕</button>
-    <h2 style="margin-bottom:12px;font-size:18px;font-weight:700">📋 60天托业备考计划</h2>
+    <h2 style="margin-bottom:12px;font-size:18px;font-weight:700">📋 60天 TOEIC 备考计划</h2>
     <p class="modal-meta">
       2026.06.25 → 2026.08.23 &nbsp;|&nbsp; 目标 700分 &nbsp;|&nbsp; 总学时 300h
     </p>
     <div class="modal-images">
-      <img src="img/toeic-schedule-1.jpg" alt="托业备考计划-封面" loading="lazy">
-      <img src="img/toeic-schedule-2.jpg" alt="基础筑基期" loading="lazy">
-      <img src="img/toeic-schedule-3.jpg" alt="专项强化期" loading="lazy">
-      <img src="img/toeic-schedule-4.jpg" alt="冲刺模考期" loading="lazy">
+      <img src="img/toeic-schedule-1.jpg" alt="TOEIC备考计划-封面" loading="lazy">
+      <img src="img/toeic-schedule-2.jpg" alt="TOEIC基础筑基期" loading="lazy">
+      <img src="img/toeic-schedule-3.jpg" alt="TOEIC专项强化期" loading="lazy">
+      <img src="img/toeic-schedule-4.jpg" alt="TOEIC冲刺模考期" loading="lazy">
     </div>
   </div>
 </div>
@@ -486,11 +498,11 @@ const KEY_DATES = [
   { date: '2026-11-11', label: '📝 CFA一级考试(1期)', type: 'exam' },
   { date: '2026-11-17', label: '📝 CFA一级考试(1期结束)', type: 'exam' },
 
-  // 托业
-  { date: '2026-07-27', label: '托业报名截止(1期)', type: 'reg' },
-  { date: '2026-08-23', label: '📝 托业考试(1期)', type: 'exam' },
-  { date: '2026-09-28', label: '托业报名截止(2期)', type: 'reg' },
-  { date: '2026-10-25', label: '📝 托业考试(2期)', type: 'exam' },
+  // TOEIC
+  { date: '2026-07-27', label: 'TOEIC报名截止(1期)', type: 'reg' },
+  { date: '2026-08-23', label: '📝 TOEIC考试(1期)', type: 'exam' },
+  { date: '2026-09-28', label: 'TOEIC报名截止(2期)', type: 'reg' },
+  { date: '2026-10-25', label: '📝 TOEIC考试(2期)', type: 'exam' },
 
   // CFA level 1 registration for 2027 Feb
   { date: '2026-11-05', label: 'CFA一级报名截止(2期)', type: 'reg' },
@@ -508,7 +520,7 @@ const KEY_DATES = [
 ];
 
 const PHASES = [
-  { label: '托业主攻', start: '2026-06-24', end: '2026-10-25', cls: 'p0' },
+  { label: 'TOEIC主攻', start: '2026-06-24', end: '2026-10-25', cls: 'p0' },
   { label: 'CFA一级',  start: '2026-10-26', end: '2027-02-28', cls: 'p1' },
   { label: 'BEC高级',  start: '2027-03-01', end: '2027-05-22', cls: 'p2' },
   { label: 'CPA',      start: '2027-05-23', end: '2027-08-29', cls: 'p3' },
@@ -525,10 +537,10 @@ KEY_DATES.filter(d=>d.type==='reg').forEach(d => { REG_MAP[d.date] = d.label; })
 const DATE_SHORT = {};
 KEY_DATES.forEach(d => {
   let s = '';
-  if (d.label.includes('托业')) {
+  if (d.label.includes('TOEIC')) {
     const m = d.label.match(/(\d+)期/);
     const p = m ? m[1] + '期' : '';
-    s = '托业' + p;
+    s = 'TOEIC' + p;
   }
   else if (d.label.includes('CFA')) {
     const m = d.label.match(/(\d+)期/);
@@ -617,7 +629,7 @@ function renderPhaseBar() {
     const active = i === activeIdx;
     const past = TODAY > dObj(p.end);
     let clickAttr = '', icon = '';
-    if (p.label.includes('托业')) { clickAttr = ' style="cursor:pointer" onclick="openToeicPlan()"'; icon = ' 📋'; }
+    if (p.label.includes('TOEIC')) { clickAttr = ' style="cursor:pointer" onclick="openToeicPlan()"'; icon = ' 📋'; }
     else if (p.label.includes('CFA')) { clickAttr = ' style="cursor:pointer" onclick="openCfaPlan()"'; icon = ' 📋'; }
     return `<div class="seg ${p.cls} ${active?'active':''} ${past?'inactive':''}"${clickAttr}>${p.label}${icon}</div>`;
   }).join('');
@@ -626,7 +638,7 @@ function renderPhaseBar() {
   marks.innerHTML = PHASES.map(p => {
     // Map phase label to its corresponding exam date
     let examLabel = '', emoji = '';
-    if (p.label.includes('托业')) { examLabel = '托业考试(1期)'; emoji = '🎯'; }
+    if (p.label.includes('TOEIC')) { examLabel = 'TOEIC考试(1期)'; emoji = '🎯'; }
     else if (p.label.includes('CFA')) { examLabel = 'CFA一级考试(1期)'; emoji = '📊'; }
     else if (p.label.includes('BEC')) { examLabel = 'BEC考试(预计)'; emoji = '🌍'; }
     else if (p.label.includes('CPA')) { examLabel = 'CPA考试'; emoji = '🧮'; }
@@ -703,7 +715,7 @@ function renderKeyDates() {
   const sorted = [...KEY_DATES].sort((a,b) => a.date.localeCompare(b.date));
   // Phase color mapping for key dates
   function phaseForLabel(label) {
-    if (label.includes('托业')) return {ph: '托业', cls: 'p0'};
+    if (label.includes('TOEIC')) return {ph: 'TOEIC', cls: 'p0'};
     if (label.includes('CFA')) return {ph: 'CFA', cls: 'p1'};
     if (label.includes('BEC')) return {ph: 'BEC高级', cls: 'p2'};
     if (label.includes('CPA')) return {ph: 'CPA', cls: 'p3'};
@@ -774,6 +786,18 @@ function formatEntryTime(entry) {
 function makeEntryId(now) {
   return 'entry-' + now.getTime().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
 }
+function subjectDisplayName(subject) {
+  if (subject === '托业TOEIC' || subject === 'TOEIC') return 'TOEIC';
+  return subject || '—';
+}
+function subjectBadgeText(subject) {
+  const label = subjectDisplayName(subject);
+  if (label === 'TOEIC') return 'T';
+  if (label.includes('CFA')) return 'CFA';
+  if (label.includes('BEC')) return 'BEC';
+  if (label.includes('CPA')) return 'CPA';
+  return label.slice(0, 2);
+}
 function refreshStudyViews() {
   renderTracker();
   renderProgressBars();
@@ -790,7 +814,7 @@ function renderTracker() {
       ${data.map((e, i) => {
         const tm = formatEntryTime(e);
         return `<tr>
-          <td>${escapeHtml(e.subject)}</td>
+          <td>${escapeHtml(subjectDisplayName(e.subject))}</td>
           <td>${formatHours(e.hours)}h</td>
           <td style="font-size:11px;color:#636e72;font-family:monospace">${escapeHtml(tm)}</td>
           <td><a href="#" onclick="deleteTrackerEntry(${i});return false" style="color:#ff7675;text-decoration:none;font-size:12px">✕</a></td>
@@ -887,7 +911,7 @@ function renderProgressBars() {
     return `
       <div class="progress-item">
         <div class="progress-header">
-          <span class="name">${subj}</span>
+          <span class="name subject-label"><span class="subject-badge ${PROGRESS_COLORS[i]}">${escapeHtml(subjectBadgeText(subj))}</span>${escapeHtml(subjectDisplayName(subj))}</span>
           <span class="stats">${formatHours(hours)}h / ${target}h (${pct}%)</span>
         </div>
         <div class="progress-track">
