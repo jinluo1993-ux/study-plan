@@ -1,3 +1,24 @@
+## 文件清单
+
+### GitHub 仓库（jinluo1993-ux/study-plan）
+
+| 文件 | 说明 |
+|:----|:------|
+| `index.html` | 主页面（单文件，HTML+CSS+JS） |
+| `data.json` | 云端学习记录数据（JSON格式，自动同步） |
+| `img/toeic-schedule-1.jpg` ~ `4.jpg` | 托业60天备考计划（4张图，压缩至~200KB/张） |
+| `img/cfa-schedule-1.jpg` ~ `5.jpg` | CFA一级备考计划（5张图，压缩至~220KB/张） |
+| `AGENTS.md` | 本手册 |
+| `AGENTS.override.md` | 本手册副本（Codex优先级读取） |
+
+### 本地备份
+
+| 路径 | 说明 |
+|:----|:------|
+| `#4Career/study-plan_v1.html` ~ `v9.html` | 历史版本备份 |
+| `#4Career/03-托业TOEIC/1.png` ~ `4.png` | 托业原始图片（2.5MB/张，未压缩） |
+| `#4Career/06-CFA/1.png` ~ `5.png` | CFA原始图片（2.5MB/张，未压缩） |
+
 # Jin's to do — 学习计划项目手册
 
 > 单文件 HTML 考试日历 + 学习追踪器，使用 GitHub Pages 部署。
