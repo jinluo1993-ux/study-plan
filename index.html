@@ -5,311 +5,403 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jin's to do</title>
 <style>
+  :root {
+    --bg: #f6f7fb;
+    --surface: #ffffff;
+    --surface-soft: #f9fafc;
+    --line: #e8ebf2;
+    --ink: #233143;
+    --muted: #677284;
+    --soft: #98a2b3;
+    --accent: #5f5ce6;
+    --accent-deep: #4d49c8;
+    --accent-soft: #f0efff;
+    --toeic: #d9952f;
+    --cfa: #6d63d9;
+    --bec: #2f82c9;
+    --cpa: #14998d;
+    --danger: #d94f4f;
+    --ok: #198f6b;
+    --shadow: 0 10px 30px rgba(35, 49, 67, 0.08);
+    --shadow-soft: 0 1px 3px rgba(35, 49, 67, 0.08);
+    --radius: 8px;
+    --gap: 16px;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
-    background: #f5f6fa; color: #2d3436; padding: 24px;
+    background:
+      radial-gradient(circle at top left, rgba(95,92,230,0.10), transparent 28rem),
+      linear-gradient(180deg, #fbfbfe 0%, var(--bg) 42%);
+    color: var(--ink);
+    padding: 24px;
   }
-  .container { max-width: 1100px; margin: 0 auto; }
+  button, input, select, textarea { font: inherit; }
+  .container { max-width: 1180px; margin: 0 auto; }
 
-  /* ── Header ── */
-  .header {
-    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-    border-radius: 16px; padding: 28px 32px; color: #fff; margin-bottom: 24px;
-    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+  .dashboard-header {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px;
+    margin-bottom: var(--gap);
   }
-  .header h1 { font-size: 24px; font-weight: 700; }
-  .header .sub { font-size: 14px; opacity: 0.85; margin-top: 4px; }
-  .header .next-exam {
-    background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 10px; text-align: center;
+  .header-main {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 18px; margin-bottom: 18px;
   }
-  .header .next-exam .days { font-size: 28px; font-weight: 700; }
-  .header .next-exam .label { font-size: 13px; opacity: 0.85; }
-  .header .exam-cards {
-    display: flex; gap: 12px;
+  .header h1 { font-size: 24px; font-weight: 760; letter-spacing: 0; }
+  .header .sub { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .phase-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 11px; border-radius: 999px; color: var(--accent-deep);
+    background: var(--accent-soft); font-size: 12px; font-weight: 700; white-space: nowrap;
   }
+  .exam-cards {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
+  }
+  .next-exam {
+    min-height: 96px; background: var(--surface-soft); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column;
+    justify-content: space-between;
+  }
+  .next-exam .label { color: var(--muted); font-size: 12px; line-height: 1.35; }
+  .next-exam .days { color: var(--ink); font-size: 30px; font-weight: 780; line-height: 1; }
+  .metric-detail { color: var(--soft); font-size: 11px; line-height: 1.35; }
+  .next-exam.primary {
+    background: linear-gradient(135deg, var(--accent), #7871ed);
+    border-color: transparent; color: #fff;
+  }
+  .next-exam.primary .days, .next-exam.primary .label, .next-exam.primary .metric-detail { color: #fff; }
+  .next-exam.primary .label, .next-exam.primary .metric-detail { opacity: 0.86; }
 
-  /* ── Phase Progress Bar ── */
-  .phase-bar {
-    background: #fff; border-radius: 12px; padding: 18px 24px; margin-bottom: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  .dashboard-row {
+    display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+    gap: var(--gap); align-items: start; margin-bottom: var(--gap);
   }
-  .phase-bar .label { font-size: 12px; color: #636e72; margin-bottom: 8px; }
-  .phase-bar .track {
-    display: flex; align-items: center; gap: 0; position: relative;
-    height: 32px; background: #dfe6e9; border-radius: 16px; overflow: hidden;
+  .panel, .phase-bar, .calendar-section {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); box-shadow: var(--shadow-soft);
   }
-  .phase-bar .track .seg {
-    flex: 1; height: 100%; display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 600; color: #636e72; position: relative; transition: 0.3s;
-    border-right: 2px solid #fff;
+  .panel { padding: 18px; }
+  .panel h3, .section-title {
+    font-size: 15px; font-weight: 760; color: var(--ink); letter-spacing: 0;
   }
-  .phase-bar .track .seg:last-child { border-right: none; }
-  .phase-bar .track .seg.active { color: #fff; }
-  .phase-bar .track .seg.p0 { background: #fdcb6e; }  /* 托业 */
-  .phase-bar .track .seg.p1 { background: #a29bfe; }  /* CFA一级 */
-  .phase-bar .track .seg.p2 { background: #74b9ff; }  /* BEC */
-  .phase-bar .track .seg.p3 { background: #00cec9; }  /* CPA */
-  .phase-bar .track .seg.p0.active, .phase-bar .track .seg.p1.active,
-  .phase-bar .track .seg.p2.active, .phase-bar .track .seg.p3.active {
-    font-weight: 700; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
+  .panel-head, .section-head {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    margin-bottom: 14px;
   }
-  .phase-bar .track .seg.inactive { opacity: 0.35; }
-  .phase-bar .marks {
-    display: flex; margin-top: 6px; font-size: 11px; color: #636e72;
-  }
-  .phase-bar .marks span { flex: 1; text-align: center; white-space: nowrap; }
-
-  /* ── Calendar Grid ── */
-  .calendar-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;
-  }
-  @media (max-width: 768px) { .calendar-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 500px) { .calendar-grid { grid-template-columns: 1fr; } }
-
-  .month-card {
-    background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  }
-  .month-card.compact { padding: 10px; }
-  .month-card .month-title {
-    font-size: 14px; font-weight: 700; color: #2d3436; margin-bottom: 8px; text-align: center;
-  }
-  .month-card.compact .month-title { font-size: 12px; margin-bottom: 4px; }
-
-  .weekday-row {
-    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 2px;
-  }
-  .weekday-row span {
-    text-align: center; font-size: 11px; color: #636e72; padding: 2px 0; font-weight: 500;
-  }
-  .compact .weekday-row span { font-size: 9px; }
-
-  .days-grid {
-    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
-  }
-  .day-cell {
-    aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    font-size: 13px; border-radius: 6px; background: #f8f9fa; color: #b2bec3;
-    position: relative; transition: 0.15s; cursor: default; line-height: 1.1; padding: 1px;
-  }
-  .compact .day-cell { font-size: 10px; border-radius: 3px; }
-
-  .day-label {
-    font-size: 7px; font-weight: 600; line-height: 1; margin-top: 1px; opacity: 0.9;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
-  }
-  .exam .day-label { color: #fff; }
-  .reg-start .day-label { color: #0984e3; }
-
-  .day-cell.today {
-    background: #6c5ce7; color: #fff; font-weight: 700;
-    box-shadow: 0 2px 8px rgba(108,92,231,0.3);
-  }
-  .day-cell.past {
-    background: #e8f8f5; color: #00b894; font-weight: 600;
-  }
-  .day-cell.past::after {
-    content: "✓"; position: absolute; font-size: 9px; top: 1px; right: 3px; color: #00b894;
-  }
-  .compact .day-cell.past::after { font-size: 7px; top: 0; right: 2px; }
-  .day-cell.future { background: #f8f9fa; color: #b2bec3; }
-  .day-cell.empty { background: transparent; }
-
-  /* Key date markers */
-  .day-cell.exam {
-    background: #ff7675; color: #fff; font-weight: 700;
-    box-shadow: 0 2px 6px rgba(255,118,117,0.35);
-  }
-  .day-cell.exam.past {
-    background: #fab1a0; color: #fff;
-  }
-  .day-cell.exam::after { display: none; }
-  .day-cell.reg-start {
-    background: #74b9ff; color: #fff; font-weight: 600;
-  }
-  .day-cell.reg-end {
-    background: #0984e3; color: #fff; font-weight: 600;
-  }
-  .day-cell.reg-period {
-    background: #dfe6e9; color: #0984e3; font-weight: 500;
-  }
-
-  /* ── Bottom: Key Dates + Tracker ── */
-  .bottom-row {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;
-  }
-  @media (max-width: 640px) { .bottom-row { grid-template-columns: 1fr; } }
-
-  .panel {
-    background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  }
-  .panel h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: #2d3436; }
-
-  .key-dates-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .key-dates-table th, .key-dates-table td {
-    padding: 6px 8px; text-align: left; border-bottom: 1px solid #f1f2f6;
-  }
-  .key-dates-table th { font-weight: 600; color: #636e72; font-size: 11px; text-transform: uppercase; }
-  .key-dates-table .tag {
-    display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
-  }
-  .tag-exam { background: #ffeaa7; color: #d63031; }
-  .tag-reg { background: #dfe6e9; color: #0984e3; }
-  .phase-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; vertical-align:middle; }
-  .phase-dot.p0 { background:#fdcb6e; }
-  .phase-dot.p1 { background:#a29bfe; }
-  .phase-dot.p2 { background:#74b9ff; }
-  .phase-dot.p3 { background:#00cec9; }
+  .panel-sub, .section-sub { color: var(--muted); font-size: 12px; line-height: 1.4; }
+  .tracker-panel { min-height: 332px; }
+  .progress-panel { min-height: 332px; }
 
   .tracker-input {
-    display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;
+    display: grid; grid-template-columns: minmax(150px, 1fr) 92px auto 94px;
+    gap: 8px; align-items: center; margin-bottom: 12px;
   }
   .tracker-input select, .tracker-input input {
-    padding: 6px 10px; border: 1px solid #dfe6e9; border-radius: 8px; font-size: 13px; background: #fff;
+    height: 38px; padding: 0 11px; border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--surface); color: var(--ink); font-size: 13px;
   }
-  .tracker-input button {
-    padding: 6px 16px; background: #6c5ce7; color: #fff; border: none; border-radius: 8px;
-    font-size: 13px; cursor: pointer; font-weight: 600;
+  .tracker-input .unit { color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .tracker-input button, .sync-btn, .import-box button {
+    height: 38px; padding: 0 14px; border: 1px solid var(--accent); border-radius: var(--radius);
+    background: var(--accent); color: #fff; font-size: 13px; cursor: pointer; font-weight: 700;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
   }
-  .tracker-input button:hover { background: #5a4bd1; }
-  .tracker-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .tracker-table th, .tracker-table td {
-    padding: 5px 8px; text-align: left; border-bottom: 1px solid #f1f2f6;
+  .tracker-input button:hover, .sync-btn.primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+  .tracker-table, .key-dates-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tracker-table th, .tracker-table td, .key-dates-table th, .key-dates-table td {
+    padding: 8px 6px; text-align: left; border-bottom: 1px solid #f0f2f6;
   }
-  .tracker-table th { font-weight: 600; color: #636e72; font-size: 11px; }
-  .tracker-total { margin-top: 8px; font-size: 14px; font-weight: 700; color: #6c5ce7; text-align: right; }
+  .tracker-table th, .key-dates-table th {
+    font-weight: 700; color: var(--soft); font-size: 11px; text-transform: uppercase;
+  }
+  .tracker-total {
+    margin-top: 10px; padding: 10px 12px; border-radius: var(--radius);
+    background: var(--accent-soft); color: var(--accent-deep); font-size: 14px;
+    font-weight: 760; text-align: right;
+  }
 
-  /* ── Progress Bars ── */
-  .progress-item { margin-bottom: 10px; }
-  .progress-header {
-    display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 3px;
-  }
-  .progress-header .name { font-weight: 600; color: #2d3436; }
-  .progress-header .stats { color: #636e72; }
-  .progress-track {
-    width: 100%; height: 16px; background: #f1f2f6; border-radius: 8px; overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%; border-radius: 8px; transition: width 0.4s ease; min-width: 0;
-  }
-  .progress-fill.c0 { background: linear-gradient(90deg, #fdcb6e, #e17055); }
-  .progress-fill.c1 { background: linear-gradient(90deg, #a29bfe, #6c5ce7); }
-  .progress-fill.c2 { background: linear-gradient(90deg, #74b9ff, #0984e3); }
-  .progress-fill.c3 { background: linear-gradient(90deg, #00cec9, #00b894); }
-
-  /* ── Data Import ── */
-  .import-area { margin-top: 14px; border-top: 1px solid #f1f2f6; padding-top: 12px; }
-  .import-toggle {
-    font-size: 12px; color: #636e72; cursor: pointer; text-decoration: underline dotted;
-  }
-  .import-toggle:hover { color: #6c5ce7; }
-  .sync-btn { font-size:11px;color:#636e72;margin-left:8px;cursor:pointer; }
-  .sync-btn:hover { color:#6c5ce7; }
-  .total-progress { margin-top:20px;padding-top:16px;border-top:2px solid #f1f2f6;text-align:center; }
-  .total-progress .big-num {
-    font-size:48px;font-weight:800;
-    background:linear-gradient(135deg,#6c5ce7,#a29bfe);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    background-clip:text;line-height:1.1;
-  }
-  .total-progress .label { font-size:12px;color:#636e72;margin-top:2px; }
-  .total-progress .detail { font-size:11px;color:#b2bec3;margin-top:4px; }
-  .sync-btn {
-    font-size: 11px; color: #636e72; margin-left: 8px; cursor: pointer;
-    transition: color 0.2s;
-  }
-  .sync-btn:hover { color: #6c5ce7; }
-
-  /* ── Total Progress ── */
+  .progress-item { margin-bottom: 13px; }
+  .progress-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; gap: 10px; }
+  .progress-header .name { font-weight: 700; color: var(--ink); }
+  .progress-header .stats { color: var(--muted); white-space: nowrap; }
+  .progress-track { width: 100%; height: 12px; background: #eef1f6; border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 999px; transition: width 0.4s ease; min-width: 0; }
+  .progress-fill.c0 { background: var(--toeic); }
+  .progress-fill.c1 { background: var(--cfa); }
+  .progress-fill.c2 { background: var(--bec); }
+  .progress-fill.c3 { background: var(--cpa); }
   .total-progress {
-    margin-top: 20px; padding-top: 16px; border-top: 2px solid #f1f2f6;
-    text-align: center;
+    margin-top: 18px; padding: 16px 0 4px; border-top: 1px solid var(--line); text-align: center;
   }
   .total-progress .big-num {
-    font-size: 48px; font-weight: 800;
-    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1.1;
+    font-size: 44px; font-weight: 820; color: var(--accent-deep); line-height: 1.05;
   }
-  .total-progress .label {
-    font-size: 12px; color: #636e72; margin-top: 2px;
+  .total-progress .label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .total-progress .detail { font-size: 12px; color: var(--soft); margin-top: 4px; }
+
+  .sync-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+  .sync-btn {
+    height: 32px; padding: 0 10px; background: var(--surface); color: var(--muted);
+    border-color: var(--line); font-size: 12px; font-weight: 700;
   }
-  .total-progress .detail {
-    font-size: 11px; color: #b2bec3; margin-top: 4px;
+  .sync-btn:hover { border-color: var(--accent); color: var(--accent-deep); background: var(--accent-soft); }
+  .sync-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .sync-btn.danger:hover { border-color: var(--danger); color: var(--danger); background: #fff5f5; }
+  .token-note { font-size: 11px; color: var(--soft); line-height: 1.4; margin-top: 8px; }
+  .sync-status { font-size: 12px; color: var(--muted); line-height: 1.4; margin-top: 6px; }
+  .sync-status.ok { color: var(--ok); }
+  .sync-status.warn { color: #a65f18; }
+  .sync-status.error { color: var(--danger); }
+  .sync-status.info { color: var(--accent-deep); }
+  .import-toggle {
+    display: inline-block; margin-top: 8px; font-size: 12px; color: var(--muted);
+    cursor: pointer; text-decoration: underline dotted;
   }
+  .import-toggle:hover { color: var(--accent-deep); }
   .import-box { display: none; margin-top: 8px; }
   .import-box.show { display: block; }
   .import-box textarea {
-    width: 100%; height: 80px; padding: 8px; border: 1px solid #dfe6e9; border-radius: 8px;
-    font-size: 11px; font-family: monospace; resize: vertical;
+    width: 100%; height: 80px; padding: 8px; border: 1px solid var(--line);
+    border-radius: var(--radius); font-size: 11px; font-family: monospace; resize: vertical;
   }
   .import-box button {
-    margin-top: 6px; padding: 4px 14px; background: #00b894; color: #fff; border: none;
-    border-radius: 6px; font-size: 12px; cursor: pointer;
+    margin-top: 6px; height: 30px; background: var(--ok); border-color: var(--ok); font-size: 12px;
   }
-  .import-box button:hover { background: #00a381; }
   .import-msg { font-size: 12px; margin-top: 6px; }
 
-  /* ── Legend ── */
-  .legend {
-    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
-    font-size: 12px; color: #636e72; margin-bottom: 24px;
+  .phase-bar { padding: 18px; margin-bottom: var(--gap); }
+  .phase-bar .label { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .phase-bar .track {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;
+    background: transparent; border-radius: 0; overflow: visible; height: auto;
   }
-  .legend-item { display: flex; align-items: center; gap: 4px; }
-  .legend-dot {
-    display: inline-block; width: 14px; height: 14px; border-radius: 4px;
+  .phase-bar .track .seg {
+    min-height: 38px; display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-soft);
+    color: var(--muted); font-size: 12px; font-weight: 700; transition: 0.2s; text-align: center;
   }
-  .legend-dot.red { background: #ff7675; }
-  .legend-dot.blue { background: #74b9ff; }
-  .legend-dot.purple { background: #6c5ce7; }
-  .legend-dot.green { background: #00b894; }
+  .phase-bar .track .seg.p0 { border-color: rgba(217,149,47,0.28); color: #9a6418; }
+  .phase-bar .track .seg.p1 { border-color: rgba(109,99,217,0.28); color: var(--cfa); }
+  .phase-bar .track .seg.p2 { border-color: rgba(47,130,201,0.28); color: var(--bec); }
+  .phase-bar .track .seg.p3 { border-color: rgba(20,153,141,0.28); color: var(--cpa); }
+  .phase-bar .track .seg.active {
+    background: var(--accent-soft); color: var(--accent-deep); border-color: rgba(95,92,230,0.40);
+    box-shadow: inset 0 0 0 1px rgba(95,92,230,0.08);
+  }
+  .phase-bar .track .seg.inactive { opacity: 0.55; }
+  .phase-bar .marks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 8px; font-size: 11px; color: var(--muted); }
+  .phase-bar .marks span { text-align: center; white-space: nowrap; }
 
-  /* ── TOEIC Plan Modal ── */
+  .calendar-section { padding: 18px; margin-bottom: var(--gap); }
+  .calendar-tools { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .legend {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-start;
+    font-size: 12px; color: var(--muted); margin: 0;
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .legend-dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
+  .legend-dot.red { background: var(--danger); }
+  .legend-dot.blue { background: var(--bec); }
+  .legend-dot.purple { background: var(--accent); }
+  .legend-dot.green { background: var(--ok); }
+  .calendar-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .month-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 12px; box-shadow: none;
+  }
+  .month-card.compact { padding: 10px; }
+  .month-card .month-title { font-size: 13px; font-weight: 760; color: var(--ink); margin-bottom: 8px; text-align: center; }
+  .month-card.compact .month-title { font-size: 12px; margin-bottom: 6px; }
+  .weekday-row, .days-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+  .weekday-row { margin-bottom: 3px; }
+  .weekday-row span { text-align: center; font-size: 10px; color: var(--soft); padding: 2px 0; font-weight: 700; }
+  .compact .weekday-row span { font-size: 9px; }
+  .day-cell {
+    aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 12px; border-radius: 5px; background: #fbfcfe; color: #a4adbb;
+    position: relative; transition: 0.15s; cursor: default; line-height: 1.1; padding: 1px;
+    border: 1px solid transparent;
+  }
+  .compact .day-cell { font-size: 10px; border-radius: 4px; }
+  .day-label {
+    font-size: 7px; font-weight: 700; line-height: 1; margin-top: 1px; opacity: 0.9;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+  }
+  .day-cell.today {
+    background: var(--accent); color: #fff; font-weight: 760; box-shadow: 0 4px 12px rgba(95,92,230,0.22);
+  }
+  .day-cell.past { background: #f3fbf8; color: var(--ok); font-weight: 700; }
+  .day-cell.past::after {
+    content: "✓"; position: absolute; font-size: 8px; top: 1px; right: 3px; color: var(--ok);
+  }
+  .day-cell.future { background: #fbfcfe; color: #a4adbb; }
+  .day-cell.empty { background: transparent; border-color: transparent; }
+  .day-cell.exam {
+    background: #fff4f4; color: var(--danger); border-color: rgba(217,79,79,0.28); font-weight: 780;
+  }
+  .day-cell.exam .day-label { color: var(--danger); }
+  .day-cell.exam.past { background: #fff7f7; color: #c76a6a; }
+  .day-cell.exam::after { display: none; }
+  .day-cell.reg-start {
+    background: #eff7ff; color: var(--bec); border-color: rgba(47,130,201,0.22); font-weight: 720;
+  }
+  .day-cell.reg-start .day-label { color: var(--bec); }
+
+  .key-dates-table .tag {
+    display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 11px; font-weight: 700;
+  }
+  .tag-exam { background: #fff4f4; color: var(--danger); }
+  .tag-reg { background: #eff7ff; color: var(--bec); }
+  .remaining-past { color: var(--soft); font-weight: 400; }
+  .remaining-normal { color: var(--muted); font-weight: 400; }
+  .remaining-soon { color: var(--toeic); font-weight: 760; }
+  .remaining-urgent { color: var(--danger); font-weight: 760; }
+  .phase-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+  .phase-dot.p0 { background: var(--toeic); }
+  .phase-dot.p1 { background: var(--cfa); }
+  .phase-dot.p2 { background: var(--bec); }
+  .phase-dot.p3 { background: var(--cpa); }
+
   .modal-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    display: none; position: fixed; inset: 0; background: rgba(21, 29, 43, 0.64);
     z-index: 1000; justify-content: center; align-items: center; padding: 20px;
   }
   .modal-overlay.show { display: flex; }
   .modal-content {
-    background: #fff; border-radius: 16px; max-width: 760px; width: 100%;
-    max-height: 90vh; overflow-y: auto; padding: 28px; position: relative;
+    background: var(--surface); border-radius: var(--radius); max-width: 820px; width: 100%;
+    max-height: 90vh; overflow-y: auto; padding: 24px; position: relative; box-shadow: var(--shadow);
   }
   .modal-close {
-    position: sticky; top: 0; float: right; width: 32px; height: 32px;
-    background: #ff7675; color: #fff; border: none; border-radius: 50%;
-    font-size: 18px; cursor: pointer; z-index: 1; display: flex;
-    align-items: center; justify-content: center;
+    position: sticky; top: 0; float: right; width: 34px; height: 34px;
+    background: var(--surface-soft); color: var(--muted); border: 1px solid var(--line); border-radius: 50%;
+    font-size: 18px; cursor: pointer; z-index: 1; display: flex; align-items: center; justify-content: center;
   }
-  .modal-close:hover { background: #d63031; }
-  .modal-images {
-    display: flex; flex-direction: column; gap: 12px; align-items: center;
-    clear: both;
-  }
+  .modal-close:hover { color: var(--danger); border-color: rgba(217,79,79,0.25); background: #fff5f5; }
+  .modal-meta { color: var(--muted); font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+  .modal-images { display: flex; flex-direction: column; gap: 14px; align-items: center; clear: both; }
   .modal-images img {
-    width: 100%; max-width: 540px; border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 100%; max-width: 620px; border-radius: var(--radius); box-shadow: var(--shadow-soft);
+  }
+
+  @media (max-width: 900px) {
+    .dashboard-row { grid-template-columns: 1fr; }
+    .calendar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 12px; }
+    .dashboard-header, .panel, .phase-bar, .calendar-section { padding: 14px; }
+    .header-main { flex-direction: column; gap: 10px; margin-bottom: 12px; }
+    .header h1 { font-size: 22px; }
+    .exam-cards { grid-template-columns: 1fr; }
+    .next-exam { min-height: 78px; padding: 12px; }
+    .next-exam .days { font-size: 26px; }
+    .tracker-input { grid-template-columns: 1fr 82px; }
+    .tracker-input .unit { align-self: center; }
+    .tracker-input button { grid-column: 1 / -1; width: 100%; }
+    .progress-header { flex-direction: column; gap: 2px; }
+    .phase-bar .track, .phase-bar .marks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .calendar-grid { grid-template-columns: 1fr; }
+    .section-head { align-items: flex-start; flex-direction: column; }
+    .tracker-table, .key-dates-table { font-size: 12px; }
+    .tracker-table th, .tracker-table td,
+    .key-dates-table th, .key-dates-table td { padding: 6px 4px; }
+    .sync-btn { flex: 1 1 auto; }
+    .modal-content { padding: 18px; }
+  }
+
+  @media (max-width: 420px) {
+    .total-progress .big-num { font-size: 38px; }
+    .day-label { font-size: 6px; }
+    .tracker-input { grid-template-columns: 1fr; }
+    .tracker-input .unit { display: none; }
   }
 </style>
 </head>
 <body>
 <div class="container" id="app">
 
-  <!-- ─── Header ─── -->
-  <div class="header">
-    <div>
-      <h1>📚 Jin's to do</h1>
-      <div class="sub" id="todayDisplay">加载中...</div>
+  <!-- ─── Dashboard Header ─── -->
+  <div class="header dashboard-header">
+    <div class="header-main">
+      <div>
+        <h1>📚 Jin's to do</h1>
+        <div class="sub" id="todayDisplay">加载中...</div>
+      </div>
+      <div class="phase-chip" id="currentPhaseLabel">当前阶段</div>
     </div>
+
     <div class="exam-cards">
-      <div class="next-exam">
-        <div class="days" id="nextExamDays1">—</div>
+      <div class="next-exam primary">
         <div class="label" id="nextExamLabel1">距下次考试</div>
+        <div class="days" id="nextExamDays1">—</div>
+        <div class="metric-detail">最近考试倒计时</div>
       </div>
       <div class="next-exam">
+        <div class="label" id="nextExamLabel2">距 CFA1期</div>
         <div class="days" id="nextExamDays2">—</div>
-        <div class="label" id="nextExamLabel2">距第二次考试</div>
+        <div class="metric-detail">CFA 专项关注</div>
       </div>
+      <div class="next-exam">
+        <div class="label">总进度</div>
+        <div class="days" id="headerTotalPct">0.0%</div>
+        <div class="metric-detail" id="headerTotalHours">0h / 2550h</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Daily Workspace ─── -->
+  <div class="dashboard-row">
+    <div class="panel tracker-panel">
+      <div class="panel-head">
+        <div>
+          <h3>📝 今日复习记录</h3>
+          <div class="panel-sub">托业 / CFA / BEC / CPA</div>
+        </div>
+      </div>
+      <div class="tracker-input">
+        <select id="trackerSubject">
+          <option value="托业TOEIC">托业TOEIC</option>
+          <option value="CFA一级">CFA一级</option>
+          <option value="BEC高级">BEC高级</option>
+          <option value="CPA">CPA</option>
+        </select>
+        <input type="number" id="trackerHours" min="0.5" max="24" step="0.5" value="1">
+        <span class="unit">小时</span>
+        <button onclick="addTrackerEntry()">记录</button>
+      </div>
+      <table class="tracker-table" id="trackerTable"></table>
+      <div class="tracker-total" id="trackerTotal">今日总计: 0h</div>
+
+      <div class="sync-row">
+        <button type="button" class="sync-btn primary" onclick="syncAndShowStatus()">📤 同步云端</button>
+        <button type="button" class="sync-btn" onclick="configureToken()">🔑 设置/更新Token</button>
+        <button type="button" class="sync-btn danger" onclick="clearToken()">清除Token</button>
+      </div>
+      <div class="token-note">Token 只保存在当前浏览器本地；换设备需要在该设备重新设置。</div>
+      <div class="sync-status" id="syncStatus"></div>
+      <span class="import-toggle" onclick="toggleImport()">📥 导入同步数据</span>
+      <div class="import-box" id="importBox">
+        <textarea id="importData" placeholder="在此粘贴我给你的数据块..."></textarea>
+        <button onclick="importData()">导入</button>
+        <div class="import-msg" id="importMsg"></div>
+      </div>
+    </div>
+
+    <div class="panel progress-panel">
+      <div class="panel-head">
+        <div>
+          <h3>📊 累计进度</h3>
+          <div class="panel-sub">2550h 总目标</div>
+        </div>
+      </div>
+      <div id="progressBars"></div>
+      <div id="totalProgress"></div>
     </div>
   </div>
 
@@ -320,54 +412,34 @@
     <div class="marks" id="phaseMarks"></div>
   </div>
 
-  <!-- ─── Legend ─── -->
-  <div class="legend">
-    <span class="legend-item"><span class="legend-dot purple"></span> 今天</span>
-    <span class="legend-item"><span class="legend-dot green"></span> 已过 ✓</span>
-    <span class="legend-item"><span class="legend-dot red"></span> 考试日</span>
-    <span class="legend-item"><span class="legend-dot blue"></span> 报名期</span>
-  </div>
-
-  <!-- ─── Calendar ─── -->
-  <div class="calendar-grid" id="calendarGrid"></div>
-
-  <!-- ─── Bottom Row ─── -->
-  <div class="bottom-row">
-    <div class="panel">
-      <h3>📌 关键日期</h3>
-      <table class="key-dates-table" id="keyDatesTable"></table>
-    </div>
-    <div class="panel">
-      <h3>📝 今日复习记录</h3>
-      <div class="tracker-input">
-        <select id="trackerSubject">
-          <option value="托业TOEIC">托业TOEIC</option>
-          <option value="CFA一级">CFA一级</option>
-          <option value="BEC高级">BEC高级</option>
-          <option value="CPA">CPA</option>
-        </select>
-        <input type="number" id="trackerHours" min="0.5" max="24" step="0.5" value="1" style="width:60px">
-        <span>小时</span>
-        <button onclick="addTrackerEntry()">记录</button>
+  <!-- ─── Calendar Overview ─── -->
+  <section class="calendar-section">
+    <div class="section-head">
+      <div>
+        <div class="section-title">备考时间总览</div>
+        <div class="section-sub">2026.06 - 2027.08</div>
       </div>
-      <table class="tracker-table" id="trackerTable"></table>
-      <div class="tracker-total" id="trackerTotal">今日总计: 0h</div>
-
-      <h3 style="margin-top:18px; font-size:15px; font-weight:700;">📊 累计进度</h3>
-      <div id="progressBars"></div>
-      <div id="totalProgress"></div>
-      <div id="totalProgress"></div>
-
-      <div class="import-area">
-        <span class="import-toggle" onclick="toggleImport()">📥 导入同步数据</span>
-        <span class="sync-btn" onclick="syncAndShowStatus()">📤 推送到云端</span>
-        <div class="import-box" id="importBox">
-          <textarea id="importData" placeholder="在此粘贴我给你的数据块..."></textarea>
-          <button onclick="importData()">导入</button>
-          <div class="import-msg" id="importMsg"></div>
+      <div class="calendar-tools">
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot purple"></span> 今天</span>
+          <span class="legend-item"><span class="legend-dot green"></span> 已过</span>
+          <span class="legend-item"><span class="legend-dot red"></span> 考试</span>
+          <span class="legend-item"><span class="legend-dot blue"></span> 报名</span>
         </div>
       </div>
     </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </section>
+
+  <!-- ─── Key Dates ─── -->
+  <div class="panel key-dates-panel">
+    <div class="panel-head">
+      <div>
+        <h3>📌 关键日期</h3>
+        <div class="panel-sub">考试与报名</div>
+      </div>
+    </div>
+    <table class="key-dates-table" id="keyDatesTable"></table>
   </div>
 </div>
 
@@ -376,7 +448,7 @@
   <div class="modal-content">
     <button class="modal-close" onclick="closeToeicPlan()">✕</button>
     <h2 style="margin-bottom:12px;font-size:18px;font-weight:700">📋 60天托业备考计划</h2>
-    <p style="color:#636e72;font-size:13px;margin-bottom:16px">
+    <p class="modal-meta">
       2026.06.25 → 2026.08.23 &nbsp;|&nbsp; 目标 700分 &nbsp;|&nbsp; 总学时 300h
     </p>
     <div class="modal-images">
@@ -393,7 +465,7 @@
   <div class="modal-content">
     <button class="modal-close" onclick="closeCfaPlan()">✕</button>
     <h2 style="margin-bottom:12px;font-size:18px;font-weight:700">📊 CFA一级备考计划</h2>
-    <p style="color:#636e72;font-size:13px;margin-bottom:16px">
+    <p class="modal-meta">
       CFA Level 1 &nbsp;|&nbsp; 目标通过 &nbsp;|&nbsp; 建议学时 350h
     </p>
     <div class="modal-images">
@@ -455,13 +527,12 @@ KEY_DATES.forEach(d => {
   let s = '';
   if (d.label.includes('托业')) {
     const m = d.label.match(/(\d+)期/);
-    const p = m ? '第' + m[1] + '期' : '';
+    const p = m ? m[1] + '期' : '';
     s = '托业' + p;
   }
   else if (d.label.includes('CFA')) {
-    // Extract period from label like '(第2期)' or '(第3期)'
     const m = d.label.match(/(\d+)期/);
-    const p = m ? '第' + m[1] + '期' : '';
+    const p = m ? m[1] + '期' : '';
     s = 'CFA' + p;
   }
   else if (d.label.includes('BEC')) s = 'BEC';
@@ -482,10 +553,25 @@ function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
 const TODAY = new Date(); TODAY.setHours(0,0,0,0);
 const TODAY_STR = fmtDate(TODAY);
 
+function getActivePhaseIndex() {
+  if (TODAY < dObj(PHASES[0].start)) return 0;
+  let activeIdx = -1;
+  for (let i = 0; i < PHASES.length; i++) {
+    const s = dObj(PHASES[i].start), e = dObj(PHASES[i].end);
+    if (TODAY >= s && TODAY <= e) { activeIdx = i; break; }
+    if (i < PHASES.length - 1 && TODAY >= s && TODAY < dObj(PHASES[i+1].start)) { activeIdx = i; break; }
+  }
+  return activeIdx === -1 ? PHASES.length - 1 : activeIdx;
+}
+
 // ─── Header ────────────────────────────────────
 function updateHeader() {
   document.getElementById('todayDisplay').textContent =
     `今天是 ${TODAY.getFullYear()}年${TODAY.getMonth()+1}月${TODAY.getDate()}日 星期${'日一二三四五六'[TODAY.getDay()]}`;
+
+  const phase = PHASES[getActivePhaseIndex()];
+  const phaseEl = document.getElementById('currentPhaseLabel');
+  if (phaseEl && phase) phaseEl.textContent = `当前阶段 · ${phase.label}`;
 
   // Get upcoming exams sorted by date
   const upcoming = EXAM_DATES
@@ -525,13 +611,7 @@ function renderPhaseBar() {
   const track = document.getElementById('phaseTrack');
   const marks = document.getElementById('phaseMarks');
 
-  let activeIdx = -1;
-  for (let i = 0; i < PHASES.length; i++) {
-    const s = dObj(PHASES[i].start), e = dObj(PHASES[i].end);
-    if (TODAY >= s && TODAY <= e) { activeIdx = i; break; }
-    if (i < PHASES.length - 1 && TODAY >= s && TODAY < dObj(PHASES[i+1].start)) { activeIdx = i; break; }
-  }
-  if (activeIdx === -1) activeIdx = PHASES.length - 1;
+  const activeIdx = getActivePhaseIndex();
 
   track.innerHTML = PHASES.map((p, i) => {
     const active = i === activeIdx;
@@ -629,6 +709,12 @@ function renderKeyDates() {
     if (label.includes('CPA')) return {ph: 'CPA', cls: 'p3'};
     return {ph: '', cls: ''};
   }
+  function remainingClass(diff) {
+    if (diff < 0) return 'remaining-past';
+    if (diff <= 7) return 'remaining-urgent';
+    if (diff <= 30) return 'remaining-soon';
+    return 'remaining-normal';
+  }
   t.innerHTML = `
     <tr><th>日期</th><th>事项</th><th>阶段</th><th>剩余</th></tr>
     ${sorted.map(d => {
@@ -643,21 +729,55 @@ function renderKeyDates() {
         <td style="white-space:nowrap">${d.date}</td>
         <td><span class="tag ${tagCls}">${tagLabel}</span> ${d.label}</td>
         <td style="font-size:12px">${phaseHtml}</td>
-        <td style="font-weight:${diff>=0&&diff<=30?'700':'400'}; color:${diff<0?'#b2bec3':diff<=7?'#d63031':diff<=30?'#fdcb6e':'#636e72'}">${remaining}</td>
+        <td class="${remainingClass(diff)}">${remaining}</td>
       </tr>`;
     }).join('')}
   `;
 }
 
 // ─── Study Tracker (localStorage) ──────────────
-function getTrackerData() {
+function getTrackerData(date = TODAY_STR) {
   try {
-    const raw = localStorage.getItem('exam_tracker_' + TODAY_STR);
-    return raw ? JSON.parse(raw) : [];
+    const raw = localStorage.getItem('exam_tracker_' + date);
+    const data = raw ? JSON.parse(raw) : [];
+    return Array.isArray(data) ? data : [];
   } catch { return []; }
 }
-function saveTrackerData(data) {
-  localStorage.setItem('exam_tracker_' + TODAY_STR, JSON.stringify(data));
+function saveTrackerData(data, date = TODAY_STR) {
+  localStorage.setItem('exam_tracker_' + date, JSON.stringify(data));
+}
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[ch]));
+}
+function formatHours(value) {
+  const n = Number(value) || 0;
+  return Number.isInteger(n) ? String(n) : n.toFixed(1).replace(/\.0$/, '');
+}
+function formatEntryTime(entry) {
+  if (entry.ts) return entry.ts.slice(2,4) + '-' + entry.ts.slice(5);
+  if (entry.createdAt) {
+    const dt = new Date(entry.createdAt);
+    if (!Number.isNaN(dt.getTime())) {
+      return String(dt.getDate()).padStart(2,'0') + '-' +
+        String(dt.getHours()).padStart(2,'0') + ':' +
+        String(dt.getMinutes()).padStart(2,'0');
+    }
+  }
+  return '—';
+}
+function makeEntryId(now) {
+  return 'entry-' + now.getTime().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+}
+function refreshStudyViews() {
+  renderTracker();
+  renderProgressBars();
+  renderTotalProgress();
 }
 function renderTracker() {
   const data = getTrackerData();
@@ -668,44 +788,46 @@ function renderTracker() {
     t.innerHTML = `
       <tr><th>科目</th><th>时长</th><th>记录时间</th><th></th></tr>
       ${data.map((e, i) => {
-        const ts = e.ts || '—';
-        const tm = ts !== '—' ? ts.slice(2,4) + '-' + ts.slice(5) : '—';
+        const tm = formatEntryTime(e);
         return `<tr>
-          <td>${e.subject}</td>
-          <td>${e.hours}h</td>
-          <td style="font-size:11px;color:#636e72;font-family:monospace">${tm}</td>
+          <td>${escapeHtml(e.subject)}</td>
+          <td>${formatHours(e.hours)}h</td>
+          <td style="font-size:11px;color:#636e72;font-family:monospace">${escapeHtml(tm)}</td>
           <td><a href="#" onclick="deleteTrackerEntry(${i});return false" style="color:#ff7675;text-decoration:none;font-size:12px">✕</a></td>
         </tr>`;
       }).join('')}
     `;
   }
-  const total = data.reduce((s, e) => s + e.hours, 0);
-  document.getElementById('trackerTotal').textContent = `今日总计: ${total}h`;
+  const total = data.reduce((s, e) => s + (Number(e.hours) || 0), 0);
+  document.getElementById('trackerTotal').textContent = `今日总计: ${formatHours(total)}h`;
 }
 function addTrackerEntry() {
   const subj = document.getElementById('trackerSubject').value;
-  const hrs = parseFloat(document.getElementById('trackerHours').value) || 1;
+  const hrs = Math.max(0.5, Math.min(24, parseFloat(document.getElementById('trackerHours').value) || 1));
   const data = getTrackerData();
   const now = new Date();
   const mm = String(now.getMonth()+1).padStart(2,'0');
   const dd = String(now.getDate()).padStart(2,'0');
   const hh = String(now.getHours()).padStart(2,'0');
   const mi = String(now.getMinutes()).padStart(2,'0');
-  data.push({ subject: subj, hours: hrs, ts: mm+dd+'-'+hh+':'+mi });
+  data.push({
+    id: makeEntryId(now),
+    subject: subj,
+    hours: hrs,
+    ts: mm+dd+'-'+hh+':'+mi,
+    createdAt: now.toISOString()
+  });
   saveTrackerData(data);
-  renderTracker();
-  renderProgressBars();
-  renderTotalProgress();
-  syncToCloud();
+  refreshStudyViews();
+  syncToCloud({ silentMissingToken: true });
 }
 function deleteTrackerEntry(idx) {
   const data = getTrackerData();
+  if (data[idx]) registerDeletedEntry(TODAY_STR, data[idx]);
   data.splice(idx, 1);
   saveTrackerData(data);
-  renderTracker();
-  renderProgressBars();
-  renderTotalProgress();
-  syncToCloud();
+  refreshStudyViews();
+  syncToCloud({ silentMissingToken: true });
 }
 
 // ─── Progress Bars ──
@@ -729,7 +851,8 @@ function getCumulativeHours() {
       if (!Array.isArray(entries)) continue;
       for (const e of entries) {
         if (totals.hasOwnProperty(e.subject)) {
-          totals[e.subject] += e.hours;
+          const hours = Number(e.hours);
+          if (Number.isFinite(hours)) totals[e.subject] += hours;
         }
       }
     } catch {}
@@ -738,34 +861,19 @@ function getCumulativeHours() {
 }
 
 function renderTotalProgress() {
-  const container = document.getElementById('totalProgress');
-  if (!container) return;
-  const totals = getCumulativeHours();
-  const subjects = Object.keys(PROGRESS_TARGETS);
-  let totalHours = 0, totalTarget = 0;
-  for (const subj of subjects) {
-    totalHours += (totals[subj] || 0);
-    totalTarget += PROGRESS_TARGETS[subj];
-  }
-  const pct = totalTarget > 0 ? ((totalHours / totalTarget) * 100) : 0;
-  const rounded = pct.toFixed(1);
-  container.innerHTML = `
-    <div class="total-progress">
-      <div class="big-num">${rounded}%</div>
-      <div class="label">总进度</div>
-      <div class="detail">${totalHours}h / ${totalTarget}h</div>
-    </div>
-  `;
-}
-function renderTotalProgress() {
   const el = document.getElementById('totalProgress');
-  if (!el) return;
   const totals = getCumulativeHours();
   const subs = Object.keys(PROGRESS_TARGETS);
   let th = 0, tt = 0;
   for (const s of subs) { th += (totals[s]||0); tt += PROGRESS_TARGETS[s]; }
   const p = tt > 0 ? ((th/tt)*100).toFixed(1) : '0.0';
-  el.innerHTML = '<div class="total-progress"><div class="big-num">'+p+'%</div><div class="label">总进度</div><div class="detail">'+th+'h / '+tt+'h</div></div>';
+  if (el) {
+    el.innerHTML = '<div class="total-progress"><div class="big-num">'+p+'%</div><div class="label">总进度</div><div class="detail">'+formatHours(th)+'h / '+tt+'h</div></div>';
+  }
+  const headerPct = document.getElementById('headerTotalPct');
+  const headerHours = document.getElementById('headerTotalHours');
+  if (headerPct) headerPct.textContent = p + '%';
+  if (headerHours) headerHours.textContent = formatHours(th) + 'h / ' + tt + 'h';
 }
 function renderProgressBars() {
   const container = document.getElementById('progressBars');
@@ -773,14 +881,14 @@ function renderProgressBars() {
   const subjects = Object.keys(PROGRESS_TARGETS);
 
   container.innerHTML = subjects.map((subj, i) => {
-    const hours = totals[subj];
+    const hours = totals[subj] || 0;
     const target = PROGRESS_TARGETS[subj];
     const pct = Math.min(100, Math.round((hours / target) * 100));
     return `
       <div class="progress-item">
         <div class="progress-header">
           <span class="name">${subj}</span>
-          <span class="stats">${hours}h / ${target}h (${pct}%)</span>
+          <span class="stats">${formatHours(hours)}h / ${target}h (${pct}%)</span>
         </div>
         <div class="progress-track">
           <div class="progress-fill ${PROGRESS_COLORS[i]}" style="width:${pct}%"></div>
@@ -803,12 +911,13 @@ function importData() {
     let count = 0;
     for (const day of data) {
       if (!day.date || !Array.isArray(day.entries)) continue;
-      localStorage.setItem('exam_tracker_' + day.date, JSON.stringify(day.entries));
-      count += day.entries.length;
+      const existing = getTrackerData(day.date);
+      const merged = mergeEntries(day.date, existing, day.entries);
+      saveTrackerData(merged, day.date);
+      count += Math.max(0, merged.length - existing.length);
     }
     msg.innerHTML = `<span style="color:#00b894">✅ 成功导入 ${count} 条记录</span>`;
-    renderTracker();
-    renderProgressBars();
+    refreshStudyViews();
   } catch (e) {
     msg.innerHTML = `<span style="color:#ff7675">❌ 导入失败：${e.message}</span>`;
   }
@@ -816,78 +925,164 @@ function importData() {
 
 // ─── Cloud Data Sync (auto read+write, API direct) ──
 const GH_API_FILE = 'https://api.github.com/repos/jinluo1993-ux/study-plan/contents/data.json';
+const DELETED_KEYS_STORAGE = 'exam_tracker_deleted_keys';
 function getGhToken() { return localStorage.getItem('gh_token') || ''; }
 
-async function loadCloudData() {
+function setSyncStatus(message, type = '') {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  el.className = 'sync-status' + (type ? ' ' + type : '');
+  el.textContent = message;
+}
+function updateSyncStatus() {
+  if (getGhToken()) {
+    setSyncStatus('云同步已配置。记录会自动合并到 GitHub data.json。', 'ok');
+  } else {
+    setSyncStatus('未配置云同步：本机记录会正常保存；需要跨设备同步时请先设置 Token。', 'warn');
+  }
+}
+function getDeletedKeys() {
   try {
-    const token = getGhToken();
-    const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
-    const r = await fetch(GH_API_FILE + '?t=' + Date.now(), { headers });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const meta = await r.json();
-    const raw = decodeURIComponent(escape(atob(meta.content.replace(/\n/g, ''))));
-    const data = JSON.parse(raw);
-    let count = 0;
-    for (const [date, entries] of Object.entries(data)) {
-      const local = localStorage.getItem('exam_tracker_' + date);
-      if (!local) {
-        localStorage.setItem('exam_tracker_' + date, JSON.stringify(entries));
-        count += entries.length;
-      } else {
-        // Merge: deduplicate by ts (timestamp) when available, else append by subject+hours
-        try {
-          const localArr = JSON.parse(local);
-          if (!Array.isArray(localArr)) continue;
-          for (const e of entries) {
-            const dup = localArr.find(l =>
-              (e.ts && l.ts === e.ts) ||
-              (!e.ts && l.subject === e.subject && l.hours === e.hours)
-            );
-            if (!dup) { localArr.push(e); count++; }
-          }
-          localStorage.setItem('exam_tracker_' + date, JSON.stringify(localArr));
-        } catch {}
-      }
-    }
-    if (count > 0) {
-      const el = document.getElementById('importMsg');
-      if (el) el.innerHTML = '<span style="color:#00b894">☁️ 已同步 ' + count + ' 条云端记录</span>';
-    }
-    renderTracker();
-    renderProgressBars();
-  } catch(e) { console.log('Cloud sync unavailable'); }
+    const raw = localStorage.getItem(DELETED_KEYS_STORAGE);
+    const data = raw ? JSON.parse(raw) : [];
+    return new Set(Array.isArray(data) ? data : []);
+  } catch { return new Set(); }
+}
+function saveDeletedKeys(keys) {
+  const limited = Array.from(keys).slice(-500);
+  localStorage.setItem(DELETED_KEYS_STORAGE, JSON.stringify(limited));
+}
+function entryKey(entry) {
+  if (!entry || typeof entry !== 'object') return 'invalid';
+  if (entry.id) return 'id:' + entry.id;
+  const subject = String(entry.subject || '');
+  const hours = String(entry.hours ?? '');
+  if (entry.createdAt) return 'createdAt:' + entry.createdAt + ':' + subject + ':' + hours;
+  if (entry.ts) return 'legacy:' + entry.ts + ':' + subject + ':' + hours;
+  return 'legacy:' + subject + ':' + hours;
+}
+function deletedKey(date, entry) {
+  return date + '|' + entryKey(entry);
+}
+function registerDeletedEntry(date, entry) {
+  const keys = getDeletedKeys();
+  keys.add(deletedKey(date, entry));
+  saveDeletedKeys(keys);
+}
+function mergeEntries(date, firstEntries, secondEntries) {
+  const deleted = getDeletedKeys();
+  const merged = [];
+  const seen = new Set();
+  for (const entry of [...(Array.isArray(firstEntries) ? firstEntries : []), ...(Array.isArray(secondEntries) ? secondEntries : [])]) {
+    if (!entry || typeof entry !== 'object') continue;
+    const key = entryKey(entry);
+    if (deleted.has(date + '|' + key) || seen.has(key)) continue;
+    merged.push(entry);
+    seen.add(key);
+  }
+  return merged;
+}
+function collectLocalTrackerData() {
+  const payload = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key || !key.startsWith('exam_tracker_')) continue;
+    const date = key.replace('exam_tracker_', '');
+    const entries = mergeEntries(date, getTrackerData(date), []);
+    if (entries.length > 0) payload[date] = entries;
+  }
+  return payload;
+}
+function mergeTrackerMaps(firstMap = {}, secondMap = {}) {
+  const merged = {};
+  const dates = new Set([...Object.keys(firstMap || {}), ...Object.keys(secondMap || {})]);
+  Array.from(dates).sort().forEach(date => {
+    const entries = mergeEntries(date, firstMap[date], secondMap[date]);
+    if (entries.length > 0) merged[date] = entries;
+  });
+  return merged;
+}
+function saveTrackerMapToLocal(map) {
+  for (const [date, entries] of Object.entries(map)) {
+    if (Array.isArray(entries)) saveTrackerData(entries, date);
+  }
+}
+function countEntries(map) {
+  return Object.values(map || {}).reduce((sum, entries) =>
+    sum + (Array.isArray(entries) ? entries.length : 0), 0);
+}
+function orderedTrackerJson(map) {
+  const ordered = {};
+  Object.keys(map || {}).sort().forEach(date => { ordered[date] = map[date]; });
+  return JSON.stringify(ordered, null, 2);
+}
+function decodeContent(content) {
+  return decodeURIComponent(escape(atob(String(content || '').replace(/\n/g, ''))));
+}
+function encodeContent(text) {
+  return btoa(unescape(encodeURIComponent(text)));
+}
+async function fetchCloudFile(token = '') {
+  const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
+  const r = await fetch(GH_API_FILE + '?t=' + Date.now(), { headers });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const meta = await r.json();
+  const raw = decodeContent(meta.content);
+  const data = JSON.parse(raw);
+  return {
+    data: data && typeof data === 'object' && !Array.isArray(data) ? data : {},
+    sha: meta.sha
+  };
 }
 
-async function syncToCloud() {
+async function loadCloudData(options = {}) {
+  const manual = !!options.manual;
   try {
-    // 1. Collect all exam_tracker_* data from localStorage
-    const payload = {};
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (!key || !key.startsWith('exam_tracker_')) continue;
-      const date = key.replace('exam_tracker_', '');
-      try {
-        const entries = JSON.parse(localStorage.getItem(key));
-        if (Array.isArray(entries) && entries.length > 0) {
-          payload[date] = entries;
-        }
-      } catch {}
+    if (manual) setSyncStatus('☁️ 正在拉取云端记录...', 'info');
+    const cloud = await fetchCloudFile(getGhToken());
+    const local = collectLocalTrackerData();
+    const merged = mergeTrackerMaps(local, cloud.data);
+    const added = Math.max(0, countEntries(merged) - countEntries(local));
+    saveTrackerMapToLocal(merged);
+    refreshStudyViews();
+    if (manual || added > 0) {
+      setSyncStatus(added > 0 ? '☁️ 已拉取并合并 ' + added + ' 条云端记录。' : '☁️ 云端记录已是最新。', 'ok');
+    } else {
+      updateSyncStatus();
+    }
+    return cloud;
+  } catch(e) {
+    if (manual) setSyncStatus('云端拉取失败：' + e.message, 'error');
+    else console.log('Cloud sync unavailable');
+    return null;
+  }
+}
+
+async function syncToCloud(options = {}) {
+  const token = getGhToken();
+  if (!token) {
+    if (!options.silentMissingToken) {
+      setSyncStatus('未配置 Token：本地记录已保存，但不会推送到云端。', 'warn');
+    } else {
+      updateSyncStatus();
+    }
+    return false;
+  }
+  try {
+    setSyncStatus(options.manual ? '☁️ 正在合并本地与云端记录...' : '☁️ 正在自动同步...', 'info');
+    const cloud = await fetchCloudFile(token);
+    const local = collectLocalTrackerData();
+    const merged = mergeTrackerMaps(cloud.data, local);
+    saveTrackerMapToLocal(merged);
+    refreshStudyViews();
+
+    const remoteJson = orderedTrackerJson(cloud.data);
+    const mergedJson = orderedTrackerJson(merged);
+    if (remoteJson === mergedJson) {
+      setSyncStatus('☁️ 云端已是最新。', 'ok');
+      return true;
     }
 
-    if (Object.keys(payload).length === 0) return;
-
-    const token = getGhToken();
-    if (!token) { console.log('No token set - sync skipped'); return; }
-
-    // 2. Get current file SHA
-    const shaRes = await fetch(GH_API_FILE, {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-    if (!shaRes.ok) throw new Error('GET sha failed: ' + shaRes.status);
-    const shaData = await shaRes.json();
-
-    // 3. Push merged data
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
     const putRes = await fetch(GH_API_FILE, {
       method: 'PUT',
       headers: {
@@ -896,13 +1091,43 @@ async function syncToCloud() {
       },
       body: JSON.stringify({
         message: 'auto-sync study tracker',
-        content: content,
-        sha: shaData.sha,
+        content: encodeContent(mergedJson),
+        sha: cloud.sha,
       })
     });
     if (!putRes.ok) throw new Error('PUT failed: ' + putRes.status + ' ' + (await putRes.text()).slice(0,100));
-    console.log('Sync OK: ' + Object.keys(payload).length + ' days pushed');
-  } catch(e) { console.log('Sync error:', e); }
+    setSyncStatus('☁️ 同步成功：已合并 ' + countEntries(merged) + ' 条记录。', 'ok');
+    return true;
+  } catch(e) {
+    console.log('Sync error:', e);
+    setSyncStatus('同步失败：' + e.message, 'error');
+    return false;
+  }
+}
+
+function configureToken() {
+  const token = prompt('请输入 GitHub Token 以开启云同步。\nToken 只保存在当前浏览器本地；换设备需要重新设置。');
+  if (token === null) return;
+  const trimmed = token.trim();
+  if (!trimmed) {
+    setSyncStatus('Token 未修改。', 'warn');
+    return;
+  }
+  localStorage.setItem('gh_token', trimmed);
+  setSyncStatus('Token 已保存，正在同步...', 'info');
+  syncToCloud({ manual: true });
+}
+function clearToken() {
+  if (!getGhToken()) {
+    setSyncStatus('当前没有已保存的 Token。', 'warn');
+    return;
+  }
+  if (!confirm('确定清除当前浏览器保存的 GitHub Token？本地学习记录不会删除。')) return;
+  localStorage.removeItem('gh_token');
+  updateSyncStatus();
+}
+function syncAndShowStatus() {
+  syncToCloud({ manual: true });
 }
 
 // ─── Init ──────────────────────────────────────
@@ -914,14 +1139,7 @@ function init() {
   renderTracker();
   renderProgressBars();
   renderTotalProgress();
-  // Token setup - ask on first visit
-  if (!localStorage.getItem('gh_token')) {
-    const token = prompt('🔑 请输入 GitHub Token 以开启自动同步\n(首次配置，仅需一次)');
-    if (token && token.trim()) {
-      localStorage.setItem('gh_token', token.trim());
-      syncToCloud();
-    }
-  }
+  updateSyncStatus();
 }
 init();
 loadCloudData();
@@ -930,14 +1148,6 @@ loadCloudData();
 function openToeicPlan() {
   document.getElementById('toeicModal').classList.add('show');
   document.body.style.overflow = 'hidden';
-}
-function syncAndShowStatus() {
-  document.getElementById('importMsg').innerHTML = '<span style="color:#6c5ce7">☁️ 正在同步...</span>';
-  syncToCloud();
-}
-function syncAndShowStatus() {
-  document.getElementById('importMsg').innerHTML = '<span style="color:#6c5ce7">☁️ 正在同步...</span>';
-  syncToCloud();
 }
 function openCfaPlan() {
   document.getElementById('cfaModal').classList.add('show');
@@ -951,6 +1161,10 @@ function closeToeicPlan() {
   document.getElementById('toeicModal').classList.remove('show');
   document.body.style.overflow = '';
 }
+function closeAllPlans() {
+  closeToeicPlan();
+  closeCfaPlan();
+}
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('toeicModal').addEventListener('click', function(e) {
     if (e.target === this) closeToeicPlan();
@@ -959,7 +1173,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (e.target === this) closeCfaPlan();
   });
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeToeicPlan();
+    if (e.key === 'Escape') closeAllPlans();
   });
 });
 </script>
