@@ -62,6 +62,22 @@ const PHASES = [
 3. **API**: GitHub Contents API (api.github.com)，读不用 token，写需 Bearer token
 4. **编码**: 写用 `btoa(unescape(encodeURIComponent()))`，读用 `decodeURIComponent(escape(atob()))`
 
+## 版本迭代记录
+
+所有历史版本保存在 `#4Career/study-plan_v1.html` → `v9.html`。
+
+| 版本 | 迭代内容 |
+|:---|:------|
+| v1 | 原始版：证券+基金+托业+BEC+CPA |
+| v2 | 移除证券/基金，新增CFA一级（第1期Nov2026+第2期Feb2027），修正托业日期为官方日程 |
+| v3 | 简化标签：托业1期/2期、CFA1期/2期，修正阶段条时间为10/25截止 |
+| v4 | 阶段条重做：起始日期→考试倒计时（不同emoji: 🎯📊🌍🧮），关键日期表加"阶段"列+颜色圆点 |
+| v5 | 托业主攻可点击→弹窗显示4张60天备考图（压缩JPEG, ~800KB总量） |
+| v6 | 自动跨设备同步：记录学习→推GitHub data.json→另一设备拉取；首次使用弹窗输入GitHub token存localStorage |
+| v7 | 修复同步按钮乱码；新增总进度百分比大字（渐变色，4科加权，精确到0.1%） |
+| v8 | CFA一级可点击→弹窗显示5张备考图 |
+| v9 | 修复UTF-8中文乱码（Base64编解码）；修复同名日期互覆盖（改为按时间戳智能合并+附加）；记录表加"记录时间"列（dd-HH:MM格式） |
+
 ## 本地备份路径
 
 ```
