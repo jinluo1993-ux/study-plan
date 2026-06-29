@@ -145,6 +145,13 @@
       "hours": 1,
       "ts": "0629-13:13",
       "createdAt": "2026-06-29T05:13:39.346Z"
+    },
+    {
+      "id": "entry-mqystcue-81appd",
+      "subject": "托业TOEIC",
+      "hours": 0.5,
+      "ts": "0629-13:49",
+      "createdAt": "2026-06-29T05:49:59.750Z"
     }
   ]
 }
