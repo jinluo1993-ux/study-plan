@@ -131,6 +131,13 @@
       "hours": 1.5,
       "ts": "0629-10:34",
       "createdAt": "2026-06-29T02:34:44.528Z"
+    },
+    {
+      "id": "entry-mqyp5ws9-2a8qxc",
+      "subject": "托业TOEIC",
+      "hours": 1,
+      "ts": "0629-12:07",
+      "createdAt": "2026-06-29T04:07:47.001Z"
     }
   ]
 }
