@@ -196,6 +196,13 @@
       "hours": 1,
       "ts": "0630-08:48",
       "createdAt": "2026-06-30T00:48:54.311Z"
+    },
+    {
+      "id": "entry-mr0030t0-edrbux",
+      "subject": "托业TOEIC",
+      "hours": 1,
+      "ts": "0630-10:01",
+      "createdAt": "2026-06-30T02:01:14.196Z"
     }
   ]
 }
