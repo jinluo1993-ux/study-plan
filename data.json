@@ -270,11 +270,18 @@
       "createdAt": "2026-07-01T09:13:53.496Z"
     },
     {
-      "id": "entry-mr1uzfnh-ipux0z",
+      "id": "entry-mr1uzlu4-4lqqk4",
       "subject": "托业TOEIC",
       "hours": 1,
       "ts": "0701-17:14",
-      "createdAt": "2026-07-01T09:14:01.085Z"
+      "createdAt": "2026-07-01T09:14:09.100Z"
+    },
+    {
+      "id": "entry-mr1uzmht-paeb65",
+      "subject": "托业TOEIC",
+      "hours": 1,
+      "ts": "0701-17:14",
+      "createdAt": "2026-07-01T09:14:09.953Z"
     }
   ]
 }
