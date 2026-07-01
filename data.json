@@ -268,6 +268,13 @@
       "hours": 1,
       "ts": "0701-17:13",
       "createdAt": "2026-07-01T09:13:53.496Z"
+    },
+    {
+      "id": "entry-mr1uzfnh-ipux0z",
+      "subject": "托业TOEIC",
+      "hours": 1,
+      "ts": "0701-17:14",
+      "createdAt": "2026-07-01T09:14:01.085Z"
     }
   ]
 }
